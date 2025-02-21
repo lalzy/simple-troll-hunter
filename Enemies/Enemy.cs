@@ -1,9 +1,4 @@
 class Enemy : Creature{
-    public Enemy(int health, int minDamage, int maxDamage){
-        this.Health = health;
-        this.MinDamage = minDamage;
-        this.MaxDamage = maxDamage;
-    }
     public void Attack(Creature enemy){
         int damage = this.AttackAction(enemy);
 
@@ -21,9 +16,10 @@ class Enemy : Creature{
         
     public static Stack<Enemy> initEnemies (){
         Stack<Enemy> enemies = new Stack<Enemy>();
-        enemies.Push(new Enemy(20,5, 10));
-        enemies.Push(new Enemy(20,5, 10));
-        enemies.Push(new Enemy(20,5, 10));
+        enemies.Push(new Troll());
+        enemies.Push(new Goblin());
+        enemies.Push(new Goblin());
+        enemies.Push(new Goblin());
         return enemies;
     }
 }

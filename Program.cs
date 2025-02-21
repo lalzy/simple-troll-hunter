@@ -31,7 +31,6 @@ void start(){
 
     Stack<Enemy> enemies = Enemy.initEnemies();
     Enemy currentEnemy = enemies.Pop(); // Get the current enemy.
-
     Player player = new Player(50, 5, 10);
 
     string? input = "";
@@ -81,18 +80,33 @@ void start(){
         playerTurn = !playerTurn;
 
         if(currentEnemy.IsDead()){
-            Console.WriteLine("You killed the enemy!");
+            if (currentEnemy.GetType() == typeof(Goblin)){
+                Console.WriteLine("You killed the Goblin!");
+            }else{
+                Console.WriteLine("You killed a troll!!");
+            }
             if(enemies.Count > 0){
                 currentEnemy = enemies.Pop();
-                Console.WriteLine("Another enemy appeared from the shadows!");
+                if(typeof(Troll) == currentEnemy.GetType()){
+                    Console.WriteLine("The troll appears!");
+                }else{
+                    Console.WriteLine("Another Goblin appeared from the shadows!");
+                }
                 playerTurn = true;
-                surprised = ((new Random().Next(100) % 50) == 0);
+                surprised = (new Random().Next(1, 100) > 50);
+            }else{
+                Console.WriteLine("You've killed all enemies!");
+                gameRunning = false;
             }
         }
 
         // post-enemy-turn
         if(player.IsDead()){
-            Console.WriteLine("You died!");
+            if(enemies.Count == 0){
+                Console.WriteLine("but, you died..");
+            }else{
+                Console.WriteLine("You died!");
+            }
             gameRunning = false;
         }
     }while (gameRunning);
