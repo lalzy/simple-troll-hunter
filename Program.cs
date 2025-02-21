@@ -4,16 +4,17 @@ using System.Collections;
 
 
 
-void printMenu(bool playerTurn, Player player){
+void printMenu(bool playerTurn, Player player, bool blocking){
     if(playerTurn){
-        Console.WriteLine($"HP: {player.Health}");
         Console.WriteLine("[A]ttack with your sword!");
-        if(player.GetShieldHealth() > 0){
-            Console.WriteLine("[B]lock with your shield (and roll 2 attacks keeping strongest).");
-        }
-    }else{
-        Console.WriteLine("press enter to continue");
+        Console.WriteLine("[E]xamine the enemy, see it's condition.");
     }
+    if(player.GetShieldHealth() > 0 && !blocking){
+        Console.WriteLine("[B]lock with your shield (and do 2 attack rolls, keeping the highest).");
+    }
+    string text = playerTurn ? "skip" : "continue";
+    Console.WriteLine($"press enter to {text}");
+    
     Console.Write(">> ");
 }
 
@@ -26,7 +27,7 @@ void printStartMenu(){
 }
 
 
-Stack<Enemy> enemies = Enemy.initEnemies();
+Stack<Enemy> enemies = Enemy.initEnemies(3, true);
 Enemy currentEnemy = enemies.Pop(); // Get the current enemy.
 Player player = new Player(50, 5, 10);
 
@@ -39,25 +40,28 @@ void start(){
 
     string? input = "";
     Console.Clear();
-    
-    if(surprised && playerTurn){
-        playerTurn = false;
-        Console.WriteLine("You were surprised! Lost a turn");
-    }
 
     printStartMenu();
     do{
-        printMenu(playerTurn, player);
+        if(playerTurn){
+            Console.WriteLine($"You're facing a, <{currentEnemy.Name}>");
+        }
+        if(surprised && playerTurn){
+            playerTurn = false;
+            Console.WriteLine("You were surprised! Lost a turn");
+        }
+        printMenu(playerTurn, player, blocking);
         input = Console.ReadLine();
         if (input == null){ 
             Environment.Exit(-1);
+        }else if(input == ""){
+            input = " ";
         }else{
             input = input.ToLower();
         }
         
         Console.Clear();
         if(playerTurn){
-            bool validInput = false;
             if(input[0] == 'a'){
                 int damage = player.Attack();
                 player.AttackPrint(damage);
@@ -66,23 +70,24 @@ void start(){
                 }
                 blockRoll = 0; // reset block-roll
                 currentEnemy.Health -= damage;
-                validInput = true;
-            }else if(input[0] == 'b'){
-                // add drinking.
-                blocking = player.CanBlock();
-                blockRoll = player.Attack();
-                validInput = true;
+            }else if(input[0] == 'e'){
+                currentEnemy.PrintState();
             }else{
-                Console.WriteLine($"{input}, is not a valid command. You lost a turn.");
+                Console.WriteLine($"You do nothing");
             }
         }
-        // ensure we can always quit.
-        if(input == "exit" || input == "quit"){
+        // player can always do these actions.
+        if(input[0] == 'b' && !surprised){
+            // add drinking.
+            blocking = player.CanBlock();
+            blockRoll = player.Attack();
+        }else if(input == "exit" || input == "quit"){
             Environment.Exit(0);
         }
         
         // enemy turn
         if(!playerTurn){
+            surprised = false;
             int damage = currentEnemy.Attack();
             if(blocking){
                 blocking = false;
@@ -108,7 +113,7 @@ void start(){
                 if(typeof(Troll) == currentEnemy.GetType()){
                     Console.WriteLine("The troll appears!");
                 }else{
-                    Console.WriteLine("Another Goblin appeared from the shadows!");
+                    Console.WriteLine($"an {currentEnemy.Name} emerge from the shadows!");
                 }
                 playerTurn = true;
                 surprised = (new Random().Next(1, 100) > 50);
