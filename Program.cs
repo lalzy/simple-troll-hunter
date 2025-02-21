@@ -5,6 +5,7 @@ using System.Collections;
 
 
 void printMenu(bool playerTurn, Player player, bool blocking){
+    Console.WriteLine("-------------------------");
     if(playerTurn){
         Console.WriteLine("[A]ttack with your sword!");
         Console.WriteLine("[E]xamine the enemy, see it's condition.");
@@ -21,13 +22,15 @@ void printMenu(bool playerTurn, Player player, bool blocking){
 }
 
 void printNewGame(){
+    Console.WriteLine("Type and press enter to select.");
+    Console.WriteLine("Only the first character actually matters and valid characters are found between '[]'");
     Console.WriteLine("What difficulty do you want to play?");
     Console.WriteLine("[E]asy - 4 static enemies + the troll");
     Console.WriteLine("[M]edium - 3 random enemies + the troll");
     Console.WriteLine("[H]ard - 4 random enemies + the troll");
-    Console.WriteLine("[I] want to test my luck - 4 random enemies + randomized troll stats");
+    Console.WriteLine("[I] want to test my luck - 5 random enemies + randomized troll stats");
 }
-
+bool invalidSelection = false;
 Stack<Enemy> startInput(){
     printNewGame();
     string? input = Console.ReadLine();
@@ -49,10 +52,16 @@ Stack<Enemy> startInput(){
             randomized = true;
             break;
         case 'i':
-            goblinCount = 4;
+            goblinCount = 5;
             randomized = true;
             randomizedBoss = true;
             break;
+        default:
+            goblinCount = 1;
+            randomized = true;
+            randomizedBoss = true;
+            invalidSelection = true;
+        break;
     }
 
     return Enemy.initEnemies(goblinCount, randomized, randomizedBoss);
@@ -61,8 +70,8 @@ Stack<Enemy> startInput(){
 
 void printStartMenu(){
     Console.WriteLine("Welcome to the troll cave.");
-    Console.WriteLine("It's currently occupied by a troll, and it's famly (Golbins)");
-    Console.WriteLine("You've been tasked to clear out this hive.");
+    Console.WriteLine("It's currently occupied by a troll, and it's famly (Goblins)");
+    Console.WriteLine("You've been tasked to clear out the cave.");
     Console.WriteLine("Remember, you can always type {exit} or {quit} to exit");
     Console.WriteLine("---------------------------------------------------------------\n");
 }
@@ -84,6 +93,10 @@ void start(){
     enemies = startInput();
     Enemy currentEnemy = enemies.Pop();
     Console.Clear();
+    if(invalidSelection){
+        Console.WriteLine("invalid selection... May god have mercy as you find none here.");
+        Console.WriteLine();
+    }
     printStartMenu();
     do{
         if(playerTurn){
