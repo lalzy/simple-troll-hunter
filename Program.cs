@@ -18,6 +18,45 @@ void printMenu(bool playerTurn, Player player, bool blocking){
     Console.Write(">> ");
 }
 
+void printNewGame(){
+    Console.WriteLine("What difficulty do you want to play?");
+    Console.WriteLine("[E]asy - 4 static enemies + the troll");
+    Console.WriteLine("[M]edium - 3 random enemies + the troll");
+    Console.WriteLine("[H]ard - 4 random enemies + the troll");
+    Console.WriteLine("[I] want to test my luck - 4 random enemies + randomized troll stats");
+}
+
+Stack<Enemy> startInput(){
+    printNewGame();
+    string? input = Console.ReadLine();
+    if(input == null) Environment.Exit(-1);
+    int goblinCount = 0;
+    bool randomized = false;
+    bool randomizedBoss = false;
+
+    switch(input.ToLower()[0]){
+        case 'e':
+            goblinCount = 4;
+            break;
+        case 'm':
+            goblinCount = 3;
+            randomized = true;
+        break;
+        case 'h':
+            goblinCount = 4;
+            randomized = true;
+            break;
+        case 'i':
+            goblinCount = 4;
+            randomized = true;
+            randomizedBoss = true;
+            break;
+    }
+
+    return Enemy.initEnemies(goblinCount, randomized, randomizedBoss);
+}
+
+
 void printStartMenu(){
     Console.WriteLine("Welcome to the troll cave.");
     Console.WriteLine("It's currently occupied by a troll, and it's famly (Golbins)");
@@ -27,8 +66,7 @@ void printStartMenu(){
 }
 
 
-Stack<Enemy> enemies = Enemy.initEnemies(3, true);
-Enemy currentEnemy = enemies.Pop(); // Get the current enemy.
+Stack<Enemy> enemies;
 Player player = new Player(50, 5, 10);
 
 void start(){
@@ -41,6 +79,9 @@ void start(){
     string? input = "";
     Console.Clear();
 
+    enemies = startInput();
+    Enemy currentEnemy = enemies.Pop();
+    Console.Clear();
     printStartMenu();
     do{
         if(playerTurn){
