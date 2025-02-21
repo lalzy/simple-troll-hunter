@@ -7,9 +7,9 @@ using System.Collections;
 void printMenu(bool playerTurn, Player player){
     if(playerTurn){
         Console.WriteLine($"HP: {player.Health}");
-        Console.WriteLine("{Attack} with your sword!");
+        Console.WriteLine("[A]ttack with your sword!");
         if(player.GetShieldHealth() > 0){
-            Console.WriteLine("{Block} with your shield (and roll 2 attacks keeping strongest).");
+            Console.WriteLine("[B]lock with your shield (and roll 2 attacks keeping strongest).");
         }
     }else{
         Console.WriteLine("press enter to continue");
@@ -58,7 +58,7 @@ void start(){
         Console.Clear();
         if(playerTurn){
             bool validInput = false;
-            if(input == "attack"){
+            if(input[0] == 'a'){
                 int damage = player.Attack();
                 player.AttackPrint(damage);
                 if (blockRoll > damage){
@@ -67,7 +67,7 @@ void start(){
                 blockRoll = 0; // reset block-roll
                 currentEnemy.Health -= damage;
                 validInput = true;
-            }else if(input == "block"){
+            }else if(input[0] == 'b'){
                 // add drinking.
                 blocking = player.CanBlock();
                 blockRoll = player.Attack();
