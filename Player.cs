@@ -35,7 +35,7 @@ class Player : Creature{
     }
 
     public void ReduceShield(int enemyDamage){
-        _shieldHealth -= (int) Math.Ceiling((double) enemyDamage / 10); 
+        _shieldHealth -= (int) Math.Ceiling(enemyDamage / 10.0); 
     }
 
     public int GetShieldHealth(){
