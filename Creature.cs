@@ -5,13 +5,11 @@ class Creature {
     public int MinDamage;
     public int MaxDamage;
 
-public int AttackAction(Creature attacked){
-    Random rnd = new Random();
-    int damage = rnd.Next(this.MinDamage, this.MaxDamage);
-    attacked.Health -= damage;
 
-    return damage;
-}
+    public int Attack(){
+        int damage = new Random().Next(MinDamage, MaxDamage);
+        return damage;
+    }
 
 
     public bool IsDead(){

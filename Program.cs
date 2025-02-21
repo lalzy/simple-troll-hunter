@@ -2,15 +2,15 @@
 
 using System.Collections;
 
-void printCurrentState(int hp, int enemyHp){
-    Console.WriteLine($"Current HP: {hp}" +
-    $"Enemy HP: {enemyHp}");
-}
+
 
 void printMenu(bool playerTurn, Player player){
     if(playerTurn){
         Console.WriteLine($"HP: {player.Health}");
-        Console.WriteLine("1 - to attack");
+        Console.WriteLine("{Attack} with your sword!");
+        if(player.GetShieldHealth() > 0){
+            Console.WriteLine("{Block} with your shield (and roll 2 attacks keeping strongest).");
+        }
     }else{
         Console.WriteLine("press enter to continue");
     }
@@ -18,20 +18,24 @@ void printMenu(bool playerTurn, Player player){
 }
 
 void printStartMenu(){
-    Console.WriteLine("Welcome.");
-    Console.WriteLine("Type {exit} to exit");
-    Console.WriteLine("------------------------\n");
+    Console.WriteLine("Welcome to the troll cave.");
+    Console.WriteLine("It's currently occupied by a troll, and it's famly (Golbins)");
+    Console.WriteLine("You've been tasked to clear out this hive.");
+    Console.WriteLine("Remember, you can always type {exit} or {quit} to exit");
+    Console.WriteLine("---------------------------------------------------------------\n");
 }
 
+
+Stack<Enemy> enemies = Enemy.initEnemies();
+Enemy currentEnemy = enemies.Pop(); // Get the current enemy.
+Player player = new Player(50, 5, 10);
 
 void start(){
     bool playerTurn = true;
     bool gameRunning = true;
     bool surprised = false;
-
-    Stack<Enemy> enemies = Enemy.initEnemies();
-    Enemy currentEnemy = enemies.Pop(); // Get the current enemy.
-    Player player = new Player(50, 5, 10);
+    bool blocking = false;
+    int blockRoll = 0;
 
     string? input = "";
     Console.Clear();
@@ -54,26 +58,40 @@ void start(){
         Console.Clear();
         if(playerTurn){
             bool validInput = false;
-            switch (input){
-                case "attack":
-                case "atk":
-                case "1":
-                case "at":
-                    player.Attack(currentEnemy);
-                    validInput = true;
-                    break;
-                default:
-                    Console.WriteLine($"{input}, is not a valid command. You lost a turn.");
-                    break;
+            if(input == "attack"){
+                int damage = player.Attack();
+                player.AttackPrint(damage);
+                if (blockRoll > damage){
+                    damage = blockRoll;
+                }
+                blockRoll = 0; // reset block-roll
+                currentEnemy.Health -= damage;
+                validInput = true;
+            }else if(input == "block"){
+                // add drinking.
+                blocking = player.CanBlock();
+                blockRoll = player.Attack();
+                validInput = true;
+            }else{
+                Console.WriteLine($"{input}, is not a valid command. You lost a turn.");
             }
         }
         // ensure we can always quit.
         if(input == "exit" || input == "quit"){
             Environment.Exit(0);
         }
+        
+        // enemy turn
         if(!playerTurn){
-            // enemy turn
-            currentEnemy.Attack(player);
+            int damage = currentEnemy.Attack();
+            if(blocking){
+                blocking = false;
+                Console.WriteLine("You blocked the attack!");
+                player.ReduceShield(damage);
+            }else{
+                player.TakeDamagePrint(damage);
+                player.Health -= damage;
+            }
         }
 
         // post-turn cleanups
@@ -113,6 +131,11 @@ void start(){
 };
 
 
-
-
 start();
+if(player.Health > 0){
+    Console.WriteLine("You survived with:");
+    Console.WriteLine($"HP left: {player.Health}");
+    if(player.GetShieldHealth() > 0){
+        Console.WriteLine("and even kept your shield, impressive!");
+    }
+}
