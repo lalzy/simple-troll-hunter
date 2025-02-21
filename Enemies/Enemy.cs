@@ -5,10 +5,10 @@ class Enemy : Creature{
         Random rnd = new Random();
         Troll troll = new Troll();
         if(RandomizedTroll){
-            troll.BaseHealth = rnd.Next(10, 150);
+            troll.BaseHealth = rnd.Next(45, 150);
             troll.Health = troll.BaseHealth;
-            troll.MinDamage = rnd.Next(1, 5);
-            troll.MaxDamage = rnd.Next(1, 20);
+            troll.MinDamage = rnd.Next(1, 10);
+            troll.MaxDamage = rnd.Next(5, 20);
         }
         enemies.Push(troll);
 
