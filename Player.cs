@@ -10,6 +10,21 @@ class Player : Creature{
 
     }
 
+    public string ShieldConditionText(){
+        switch (_shieldHealth){
+            case 0:
+                return "You have no shield";
+            case 1:
+                return "It's on it's last legs";
+            case 2:
+                return "It's seen some use";
+            case 3:
+                return "it's brand new!";
+            default:
+                return "";
+        }
+    }
+
     public bool CanBlock(){
         if(_shieldHealth == 1){
             Console.WriteLine("You get ready to block with what remains of your shield, better make it count!");

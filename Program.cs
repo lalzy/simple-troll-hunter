@@ -10,8 +10,10 @@ void printMenu(bool playerTurn, Player player, bool blocking){
         Console.WriteLine("[E]xamine the enemy, see it's condition.");
     }
     if(player.GetShieldHealth() > 0 && !blocking){
-        Console.WriteLine("[B]lock with your shield (and do 2 attack rolls, keeping the highest).");
+        string extra = playerTurn ? "(and do 2 attack rolls, keeping the highest)" : "";
+        Console.WriteLine($"[B]lock with your shield{extra}.");
     }
+    Console.WriteLine("[C]heck your [S]tatus");
     string text = playerTurn ? "skip" : "continue";
     Console.WriteLine($"press enter to {text}");
     
@@ -121,7 +123,13 @@ void start(){
         if(input[0] == 'b' && !surprised){
             // add drinking.
             blocking = player.CanBlock();
-            blockRoll = player.Attack();
+            // Only get the bonus if we spend entire turn blocking, and not block as reaction.
+            if(playerTurn){
+                blockRoll = player.Attack();
+            }
+        }else if (!playerTurn && input[0] == 'c' || input[0]=='s'){
+            Console.WriteLine($"You currently have: {player.Health}hp left");
+            Console.WriteLine($"Your shield's condition is: {player.ShieldConditionText()}");
         }else if(input == "exit" || input == "quit"){
             Environment.Exit(0);
         }
