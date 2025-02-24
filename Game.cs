@@ -7,30 +7,28 @@ class Game{
     static void StartInput(){
         string? input = Console.ReadLine();
         if(input == null) Environment.Exit(-1);
-        int goblinCount = 0;
-        bool randomizedBoss = false;
         bool invalidSelection = false;
-
+        bool randomizedBoss = false;
         switch(input.ToLower()[0]){
             case 'e':
-                goblinCount = 4;
                 Globals.SurprisedChance = 0;
                 break;
             case 'm':
-                goblinCount = 3;
                 Globals.SurprisedChance = 30;
                 break;
             case 'h':
-                goblinCount = 4;
+                Globals.SurprisedChance = 50;
+                randomizedBoss = true;
                 break;
             case 'i':
-                goblinCount = 5;
+                Globals.Player.SetBaseHealth(Globals.Player.Health - 20);
+                Globals.SurprisedChance = 50;
                 randomizedBoss = true;
                 break;
             default:
-                goblinCount = 10;
-                Globals.SurprisedChance = 100;
                 randomizedBoss = true;
+                Globals.Player.SetBaseHealth(Globals.Player.Health - 20, 2); // Start with a beaten up shield.
+                Globals.SurprisedChance = 100;
                 invalidSelection = true;
             break;
         }

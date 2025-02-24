@@ -7,7 +7,9 @@ static class Cave{
         enemy = 1,
         boss = 2,
     }
-    static RoomType[] floor = {RoomType.empty, RoomType.enemy, RoomType.empty, RoomType.empty, RoomType.enemy, RoomType.boss};
+    static RoomType[] floor = {RoomType.empty, RoomType.enemy, RoomType.enemy, 
+    RoomType.empty, RoomType.enemy, RoomType.empty, RoomType.empty, RoomType.enemy, 
+    RoomType.enemy, RoomType.boss};
     static public int _room = 0;
  
     static public RoomType CurrentRoom(){

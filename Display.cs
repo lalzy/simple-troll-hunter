@@ -95,14 +95,14 @@ class Display{
         Console.WriteLine("Type and press enter to select.");
         Console.WriteLine("Only the first character actually matters and valid characters are found between '[]'");
         Console.WriteLine("What difficulty do you want to play?");
-        Console.WriteLine("[E]asy - 4 static enemies + the troll");
-        Console.WriteLine("[M]edium - 3 random enemies + the troll");
-        Console.WriteLine("[H]ard - 4 random enemies + the troll");
-        Console.WriteLine("[I] want to test my luck - 5 random enemies + randomized troll stats");
+        Console.WriteLine("[E]asy - can't be surprised (lose turn on enemy spawn)");
+        Console.WriteLine("[M]edium - 30% chance of being surprised");
+        Console.WriteLine("[H]ard - 50% chance of being surprised, boss-stats are random");
+        Console.WriteLine("[I] want to test my luck - Same as hard + -20 HP for player.");
     }
 
     static public void InvalidDifficultySelectionMessage(){
-            Console.WriteLine("invalid selection... May god have mercy as you find none here.");
+            Console.WriteLine("You choose to tempt the fates...");
             Console.WriteLine();
     }
 
