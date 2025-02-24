@@ -3,12 +3,8 @@ static class Combat{
         // Check if enemy is dead. If it is, make it player turn and spawn new enemy.
         if(Globals.CurrentEnemy == null || Globals.CurrentEnemy.IsDead()){
             Globals.PlayerTurn = true;
-            Globals.CurrentEnemy = Enemy.SpawnEnemy(Globals.Enemies);
-            Globals.Player.CheckSurprised();
-            // Check if enemy. If no enemy, return win-state.
-            if(Globals.CurrentEnemy == null){
-                Game.CurrentState = Game.State.won;
-            }
+            Game.CurrentState = Game.State.explore;
+            return;
         }
         // Get player action.
         PlayerAction();

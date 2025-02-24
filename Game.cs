@@ -4,7 +4,7 @@ using System.Threading.Tasks.Dataflow;
 class Game{
     public static Game.State CurrentState;
 
-    static Stack<Enemy> StartInput(){
+    static void StartInput(){
         string? input = Console.ReadLine();
         if(input == null) Environment.Exit(-1);
         int goblinCount = 0;
@@ -38,13 +38,12 @@ class Game{
         if(invalidSelection){
             Display.InvalidDifficultySelectionMessage();
         }
-        return Enemy.initEnemies(goblinCount, randomizedBoss);
     }
 
 
     static void SelectDifficulty(){
         Display.DifficultyMessage();
-        Globals.Enemies = StartInput();
+        StartInput();
         Console.Clear();
     }
 
@@ -83,8 +82,6 @@ class Game{
                     }
                     Console.WriteLine("Please enter yes or no!");
                 }
-
-                break;
             case State.won:
                 _gameRunning = false;
                 Display.VictoryMessage();
@@ -92,17 +89,23 @@ class Game{
             case State.abandoned:
             case State.lose: 
                 _gameRunning = false;
-                if(Globals.Enemies != null && Globals.Enemies.Count == 0){
-                    Display.TieMessage();
-                }else{
-                    Display.LoseMessage();
-                }
+                Display.LoseMessage();
                 break;
             case State.explore:
-                CurrentState = State.combat;
+                Cave.RoomType currentRoom = Cave.CurrentRoom();
+                Enemy.SpawnEnemy(currentRoom);
+                if (Globals.CurrentEnemy != null){
+                    Game.CurrentState = State.combat;
+                }else if(Cave.RoomType.endofCave == currentRoom){
+                    CurrentState = State.won;
+                }else{
+                    Console.WriteLine($"Room was empty.. -{Cave._room}");
+                    Console.ReadKey();
+                    Console.Clear();
+                }
                 break;
             case State.combat:
-            Combat.CombatTurn();
+                Combat.CombatTurn();
                 break;
         }
     }

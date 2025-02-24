@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.Collections;
+using System.Runtime.CompilerServices;
 using System.Security.AccessControl;
 
 /*
@@ -11,6 +12,13 @@ step 3: litt mer items for litt mer strategisk variasjon.
             > Damage over time? Stun?
 step 4: ny level (as in dungeon level) med miniboss (Goblin Shaman?)
 step 5: character creation (Choose starting items?)
+
+
+Dungeon:
+    rooms 10 - array?
+
+enemies (diffuclty) populated every X?
+
 */
 
 
