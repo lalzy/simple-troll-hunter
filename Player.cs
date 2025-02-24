@@ -3,11 +3,24 @@ using System.Security.Cryptography;
 class Player : Creature{
     private Dictionary<string, int> _inventory = new Dictionary<string,int>();
     private int _shieldHealth = 3;
+    public bool IsBlocking = false;
+    public int BlockRoll = 0;
+    public bool Surprised = false;
     public  Player(int hp, int minDamage, int maxDamage){
         this.Health = hp;
         this.MinDamage = minDamage;
         this.MaxDamage = maxDamage;
 
+    }
+
+    public int CalcDamage (){
+            int damage = this.Attack();
+            this.AttackPrint(damage);
+            if (this.BlockRoll > damage){
+                damage = this.BlockRoll;
+            }
+            this.BlockRoll = 0; // reset block-roll
+            return damage;
     }
 
     public string ShieldConditionText(){
@@ -49,7 +62,8 @@ class Player : Creature{
         }
     }
 
-    public void ReduceShield(int enemyDamage){
+    public void Block(int enemyDamage){
+        Display.ShieldBlockMessage();
         _shieldHealth -= (int) Math.Ceiling(enemyDamage / 10.0); 
     }
 

@@ -1,16 +1,50 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.Collections;
+using System.Security.AccessControl;
 
 
 
-void printMenu(bool playerTurn, Player player, bool blocking){
+
+
+void Start(){
+    bool programRunning = true;
+    while(programRunning){
+        programRunning = Game.MainLoop();
+    }
+}
+
+Start();
+
+
+
+
+
+
+
+
+
+
+/*
+// Globals
+Player player = new Player(50, 5, 10);
+Enemy? currentEnemy = null;
+bool playerTurn;
+
+void printMenu(){
+    if(playerTurn){
+        Console.WriteLine($"You're facing a, <{currentEnemy.Name}>");
+    }
+    if(player.Surprised && playerTurn){
+        playerTurn = false;
+        Console.WriteLine("You were surprised! Lost a turn");
+    }
     Console.WriteLine("-------------------------");
     if(playerTurn){
         Console.WriteLine("[A]ttack with your sword!");
         Console.WriteLine("[E]xamine the enemy, see it's condition.");
     }
-    if(player.GetShieldHealth() > 0 && !blocking){
+    if(player.GetShieldHealth() > 0 && !player.Blocking){
         string extra = playerTurn ? "(and do 2 attack rolls, keeping the highest)" : "";
         Console.WriteLine($"[B]lock with your shield{extra}.");
     }
@@ -21,18 +55,9 @@ void printMenu(bool playerTurn, Player player, bool blocking){
     Console.Write(">> ");
 }
 
-void printNewGame(){
-    Console.WriteLine("Type and press enter to select.");
-    Console.WriteLine("Only the first character actually matters and valid characters are found between '[]'");
-    Console.WriteLine("What difficulty do you want to play?");
-    Console.WriteLine("[E]asy - 4 static enemies + the troll");
-    Console.WriteLine("[M]edium - 3 random enemies + the troll");
-    Console.WriteLine("[H]ard - 4 random enemies + the troll");
-    Console.WriteLine("[I] want to test my luck - 5 random enemies + randomized troll stats");
-}
 bool invalidSelection = false;
+
 Stack<Enemy> startInput(){
-    printNewGame();
     string? input = Console.ReadLine();
     if(input == null) Environment.Exit(-1);
     int goblinCount = 0;
@@ -64,11 +89,15 @@ Stack<Enemy> startInput(){
         break;
     }
 
+    if(invalidSelection){
+        Console.WriteLine("invalid selection... May god have mercy as you find none here.");
+        Console.WriteLine();
+    }
     return Enemy.initEnemies(goblinCount, randomized, randomizedBoss);
 }
 
 
-void printStartMenu(){
+void PrintWelcomeMessage(){
     Console.WriteLine("Welcome to the troll cave.");
     Console.WriteLine("It's currently occupied by a troll, and it's famly (Goblins)");
     Console.WriteLine("You've been tasked to clear out the cave.");
@@ -77,8 +106,134 @@ void printStartMenu(){
 }
 
 
-Stack<Enemy> enemies;
-Player player = new Player(50, 5, 10);
+void PlayerAction(){
+    string? input = Console.ReadLine();
+    Console.Clear();
+    printMenu();
+    Console.Clear();
+    if (input == null){ 
+        Environment.Exit(-1);
+    }else if(input == ""){
+        input = " ";
+    }else{
+        input = input.ToLower();
+    }
+    
+    if(playerTurn){
+        if(input[0] == 'a'){
+            currentEnemy.Health -= player.CalcDamage();
+        }else if(input[0] == 'e'){
+            currentEnemy.PrintState();
+        }else{
+            Console.WriteLine($"You do nothing");
+        }
+    }
+    // player can always do these actions.
+    if(input[0] == 'b' && !player.Surprised){
+        // add drinking.
+        player.Blocking = player.CanBlock();
+        // Only get the bonus if we spend entire turn blocking, and not block as reaction.
+        if(playerTurn){
+            player.BlockRoll = player.Attack();
+        }
+    }else if (!playerTurn && input[0] == 'c' || input[0]=='s'){
+        Console.WriteLine($"You currently have: {player.Health}hp left");
+        Console.WriteLine($"Your shield's condition is: {player.ShieldConditionText()}");
+    }else if(input == "exit" || input == "quit"){
+        Environment.Exit(0);
+    }
+}
+
+Stack<Enemy> SelectDifficulty(){
+    Console.WriteLine("Type and press enter to select.");
+    Console.WriteLine("Only the first character actually matters and valid characters are found between '[]'");
+    Console.WriteLine("What difficulty do you want to play?");
+    Console.WriteLine("[E]asy - 4 static enemies + the troll");
+    Console.WriteLine("[M]edium - 3 random enemies + the troll");
+    Console.WriteLine("[H]ard - 4 random enemies + the troll");
+    Console.WriteLine("[I] want to test my luck - 5 random enemies + randomized troll stats");
+    Stack<Enemy> enemies = startInput();
+    Console.Clear();
+    return enemies;
+}
+
+Enemy spawnEnemy(Stack<Enemy> enemies){
+    if(currentEnemy == null  && enemies.Count > 0){
+        currentEnemy = enemies.Pop();
+        if(typeof(Troll) == currentEnemy.GetType()){
+            Console.WriteLine("The troll appears!");
+        }else{
+            Console.WriteLine($"an {currentEnemy.Name} emerge from the shadows!");
+        }
+        player.Surprised = (new Random().Next(1, 100) > 50);
+    }
+    return currentEnemy;
+}
+
+void DeadEnemy(Enemy? currentEnemy){
+    if(currentEnemy.IsDead()){
+        if (currentEnemy.GetType() == typeof(Goblin)){
+            Console.WriteLine("You killed the Goblin!");
+        }else{
+            Console.WriteLine("You killed a troll!!");
+        }
+        playerTurn = true;
+        currentEnemy = null;
+    }
+}
+
+void AiAction(Enemy? currentEnemy){
+    DeadEnemy(currentEnemy);
+    if(!playerTurn && currentEnemy != null){
+        player.Surprised = false;
+        int damage = currentEnemy.Attack();
+        if(player.Blocking){
+            player.Blocking = false;
+            Console.WriteLine("You blocked the attack!");
+            player.ReduceShield(damage);
+        }else{
+            player.TakeDamagePrint(damage);
+            player.Health -= damage;
+        }
+    }
+}
+
+void GameTurns(Enemy? currentEnemy, Player player){
+    printMenu();
+    PlayerAction();
+    AiAction(currentEnemy);
+    playerTurn = !playerTurn;
+}
+
+
+bool MainLoop(){
+    // difficulty selection
+    Stack<Enemy> enemies = SelectDifficulty();
+    bool gameRunning = true;
+    playerTurn = true;
+    
+    PrintWelcomeMessage();
+    while(gameRunning){
+        currentEnemy = spawnEnemy(enemies);
+        GameTurns(currentEnemy, player);
+    }
+    return false;
+}
+
+void Start(){
+    bool programRunning = true;
+    while(programRunning){
+        programRunning = MainLoop();
+    }
+}
+
+Start();
+/*
+void menu(){}
+
+void input(){
+
+}
 
 void start(){
     bool playerTurn = true;
@@ -93,59 +248,8 @@ void start(){
     enemies = startInput();
     Enemy currentEnemy = enemies.Pop();
     Console.Clear();
-    if(invalidSelection){
-        Console.WriteLine("invalid selection... May god have mercy as you find none here.");
-        Console.WriteLine();
-    }
     printStartMenu();
     do{
-        if(playerTurn){
-            Console.WriteLine($"You're facing a, <{currentEnemy.Name}>");
-        }
-        if(surprised && playerTurn){
-            playerTurn = false;
-            Console.WriteLine("You were surprised! Lost a turn");
-        }
-        printMenu(playerTurn, player, blocking);
-        input = Console.ReadLine();
-        if (input == null){ 
-            Environment.Exit(-1);
-        }else if(input == ""){
-            input = " ";
-        }else{
-            input = input.ToLower();
-        }
-        
-        Console.Clear();
-        if(playerTurn){
-            if(input[0] == 'a'){
-                int damage = player.Attack();
-                player.AttackPrint(damage);
-                if (blockRoll > damage){
-                    damage = blockRoll;
-                }
-                blockRoll = 0; // reset block-roll
-                currentEnemy.Health -= damage;
-            }else if(input[0] == 'e'){
-                currentEnemy.PrintState();
-            }else{
-                Console.WriteLine($"You do nothing");
-            }
-        }
-        // player can always do these actions.
-        if(input[0] == 'b' && !surprised){
-            // add drinking.
-            blocking = player.CanBlock();
-            // Only get the bonus if we spend entire turn blocking, and not block as reaction.
-            if(playerTurn){
-                blockRoll = player.Attack();
-            }
-        }else if (!playerTurn && input[0] == 'c' || input[0]=='s'){
-            Console.WriteLine($"You currently have: {player.Health}hp left");
-            Console.WriteLine($"Your shield's condition is: {player.ShieldConditionText()}");
-        }else if(input == "exit" || input == "quit"){
-            Environment.Exit(0);
-        }
         
         // enemy turn
         if(!playerTurn){
@@ -198,6 +302,10 @@ void start(){
 };
 
 
+}
+
+
+/*
 start();
 if(player.Health > 0){
     Console.WriteLine("You survived with:");
@@ -206,3 +314,4 @@ if(player.Health > 0){
         Console.WriteLine("and even kept your shield, impressive!");
     }
 }
+*/

@@ -28,7 +28,7 @@ class Creature {
         return damage;
     }
 
-
+    
     public bool IsDead(){
         return this.Health <= 0;
     }

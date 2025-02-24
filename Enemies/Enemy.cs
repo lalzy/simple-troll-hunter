@@ -1,5 +1,13 @@
 class Enemy : Creature{
-        
+    public static Enemy? SpawnEnemy(Stack<Enemy>? enemies){
+        if(enemies == null || enemies.Count == 0){
+            return null;
+        }
+        Enemy enemy = enemies.Pop();
+        Display.SpawnEnemyText(enemy);
+        return enemy;
+    }
+
     public static Stack<Enemy> initEnemies (int amountOfGoblins, bool randomEnemies, bool RandomizedTroll){
         Stack<Enemy> enemies = new Stack<Enemy>();
         Random rnd = new Random();
@@ -18,5 +26,14 @@ class Enemy : Creature{
             }
         }
         return enemies;
+    }
+
+    new public bool IsDead(){
+        if(this.Health <= 0){
+            Display.CreatureDiesMessage(this);
+            return true;
+        }else{
+            return false;
+        }
     }
 }
