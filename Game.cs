@@ -1,15 +1,8 @@
+using System.Runtime.InteropServices;
 using System.Threading.Tasks.Dataflow;
 
 class Game{
-    static Stack<Enemy>? Enemies;
-    static Player _player = new Player(1,1,1);
-    static Enemy? CurrentEnemy;
-    static bool PlayerTurn;
-
-    static void PrintMenu(){
-        
-        Console.Write(">> ");
-    }
+    public static Game.State CurrentState;
 
     static Stack<Enemy> StartInput(){
         string? input = Console.ReadLine();
@@ -51,151 +44,78 @@ class Game{
 
     static void SelectDifficulty(){
         Display.DifficultyMessage();
-        Enemies = StartInput();
+        Globals.Enemies = StartInput();
         Console.Clear();
     }
 
-    enum State {
-        running = 0,
-        won = 1,
-        lose = 2
+
+    public enum State {
+        abandoned = -3,
+        lose = -2,
+        won = -1,
+        start = 0,
+        explore = 1,
+        combat = 2,
     }
 
-    static void AiAction(){
-        if(!PlayerTurn && CurrentEnemy != null){
-            _player.Surprised = false;
+    static void GameTurns ()
+    {
+        switch(Game.CurrentState){
+            case State.start:
+                SelectDifficulty();
+                CreatePlayer();
+                Display.PrintWelcomeMessage();
+                CurrentState = State.explore;
+                Console.WriteLine("procceed inside?");
+                Console.WriteLine("[Y]es - to enter");
+                Console.WriteLine("[N]o - to head back");
 
-            int damage = CurrentEnemy.Attack();
-            if(_player.IsBlocking){
-                _player.IsBlocking = false;
-                _player.Block(damage);
-            }else{
-                _player.TakeDamagePrint(damage);
-                _player.Health -= damage;
-            }
-        }
-    }
-
-    enum Action {
-        nothing = ' ',
-        attack = 'a',
-        block = 'b',
-        status = 'c',
-        examine = 'e',
-    }
-
-    static Action GetPlayerAction(){
-        if(CurrentEnemy == null) return Action.nothing; // Can never happen, but it prevents annoying Warnings.
-
-        Display.PlayerMenu(PlayerTurn, CurrentEnemy, _player);
-        string? input = Console.ReadLine();
-        Console.Clear();
-        if (input == null){ 
-            Environment.Exit(-1);
-        }else if(input == ""){
-            input = " ";
-        }else{
-            input = input.ToLower();
-        }
-        
-        if(PlayerTurn){
-            if(input[0] == 'a'){
-                return Action.attack;
-            }else if(input[0] == 'e'){
-                return Action.examine;
-            }
-        }
-        // player can always do these actions.
-        if(input[0] == 'b' && !_player.Surprised){
-            return Action.block;
-        }else if (input[0] == 'c' || input[0]=='s'){
-            return Action.status;
-        }else if(input == "exit" || input == "quit"){
-            Environment.Exit(0);
-        }
-        return Action.nothing;
-    }
-    static void PlayerAction(){
-        if (CurrentEnemy == null) return; // Will never happen, but warnings are annoying.
-        Action playerAction = GetPlayerAction();
-        switch(playerAction){
-            case Action.attack:
-                CurrentEnemy.Health -= _player.CalcDamage();
-            break;
-            case Action.block: 
-                // add drinking.
-                _player.IsBlocking = _player.CanBlock();
-                // Only get the bonus if we spend entire turn blocking, and not block as reaction.
-                if(PlayerTurn){
-                }
-            break;
-            case Action.examine: 
-
-            break;
-            case Action.status: 
-                Display.StatusMessage(_player);
-            break;
-            default:
-                Display.DoNothingMessage();
-            break;
-        }
-        if(playerAction == Action.examine){
-            Display.PrintState(CurrentEnemy);
-        }
-    }
-
-    static State GameTurns(){
-        // Check if enemy is dead. If it is, make it player turn and spawn new enemy.
-        if(CurrentEnemy == null || CurrentEnemy.IsDead()){
-            PlayerTurn = true;
-            CurrentEnemy = Enemy.SpawnEnemy(Enemies);
-            _player.CheckSurprised();
-            // Check if enemy. If no enemy, return win-state.
-            if(CurrentEnemy == null){
-                return State.won;
-            }
-        }
-        // Get player action.
-        PlayerAction();
-
-        // Get Ai action
-        AiAction();
-        // Switch turn.
-        PlayerTurn = !PlayerTurn;
-        if(_player.Health <= 0){
-            return State.lose;
-        }
-        return State.running;
-    }
-
-    
-    static void CreatePlayer(){
-        _player = new Player(50, 5, 10);
-    }
-    public static bool MainLoop(){
-        // difficulty selection
-        SelectDifficulty();
-        CreatePlayer();
-        bool gameRunning = true;
-        PlayerTurn = true;
-        Display.PrintWelcomeMessage();
-        while(gameRunning){
-            switch(GameTurns()){
-                case State.running:
-                break;
-                case State.won:
-                    gameRunning = false;
-                    Display.VictoryMessage();
-                    break;
-                case State.lose: 
-                    gameRunning = false;
-                    if(Enemies != null && Enemies.Count == 0){
-                        Display.TieMessage();
-                    }else{
-                        Display.LoseMessage();
+                while(true){
+                    string? input = Console.ReadLine();
+                    Console.Clear();
+                    if (input == null) Environment.Exit(-1);
+                    if (input[0] == 'n'){
+                        CurrentState = State.abandoned;
+                        return;
+                    }else if (input[0] == 'y'){
+                        CurrentState = State.explore;
+                        return;
                     }
+                    Console.WriteLine("Please enter yes or no!");
+                }
+
                 break;
-            }
+            case State.won:
+                _gameRunning = false;
+                Display.VictoryMessage();
+                break;
+            case State.abandoned:
+            case State.lose: 
+                _gameRunning = false;
+                if(Globals.Enemies != null && Globals.Enemies.Count == 0){
+                    Display.TieMessage();
+                }else{
+                    Display.LoseMessage();
+                }
+                break;
+            case State.explore:
+                CurrentState = State.combat;
+                break;
+            case State.combat:
+            Combat.CombatTurn();
+                break;
+        }
+    }
+    static void CreatePlayer(){
+        Globals.Player = new Player(50, 5, 10);
+    }
+    static bool _gameRunning = true;
+    public static bool MainLoop(){
+        CurrentState = State.start;
+        // difficulty selection
+        Globals.PlayerTurn = true;
+        while(_gameRunning){
+            GameTurns();
         }
         return false;
     }
