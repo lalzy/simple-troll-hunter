@@ -11,7 +11,11 @@ class Display{
     }
 
     static public void SpawnEnemyText(Enemy enemy){
-        Console.WriteLine($"{enemy.Name} Appears!");
+        if(enemy.GetType() == typeof(Troll)){
+            Console.WriteLine("The troll appears!");
+        }else{
+            Console.WriteLine($"an {enemy.Name} emerge from the shadows!");
+        }
     }
 
     static public void PlayerMenu(bool playerTurn, Enemy currentEnemy, Player player){

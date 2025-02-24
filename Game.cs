@@ -15,30 +15,28 @@ class Game{
         string? input = Console.ReadLine();
         if(input == null) Environment.Exit(-1);
         int goblinCount = 0;
-        bool randomized = false;
         bool randomizedBoss = false;
         bool invalidSelection = false;
 
         switch(input.ToLower()[0]){
             case 'e':
                 goblinCount = 4;
+                Globals.SurprisedChance = 0;
                 break;
             case 'm':
                 goblinCount = 3;
-                randomized = true;
-            break;
+                Globals.SurprisedChance = 30;
+                break;
             case 'h':
                 goblinCount = 4;
-                randomized = true;
                 break;
             case 'i':
                 goblinCount = 5;
-                randomized = true;
                 randomizedBoss = true;
                 break;
             default:
-                goblinCount = 1;
-                randomized = true;
+                goblinCount = 10;
+                Globals.SurprisedChance = 100;
                 randomizedBoss = true;
                 invalidSelection = true;
             break;
@@ -47,7 +45,7 @@ class Game{
         if(invalidSelection){
             Display.InvalidDifficultySelectionMessage();
         }
-        return Enemy.initEnemies(goblinCount, randomized, randomizedBoss);
+        return Enemy.initEnemies(goblinCount, randomizedBoss);
     }
 
 
@@ -151,7 +149,7 @@ class Game{
         if(CurrentEnemy == null || CurrentEnemy.IsDead()){
             PlayerTurn = true;
             CurrentEnemy = Enemy.SpawnEnemy(Enemies);
-                
+            _player.CheckSurprised();
             // Check if enemy. If no enemy, return win-state.
             if(CurrentEnemy == null){
                 return State.won;

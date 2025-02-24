@@ -8,7 +8,7 @@ class Enemy : Creature{
         return enemy;
     }
 
-    public static Stack<Enemy> initEnemies (int amountOfGoblins, bool randomEnemies, bool RandomizedTroll){
+    public static Stack<Enemy> initEnemies (int amountOfGoblins, bool RandomizedTroll){
         Stack<Enemy> enemies = new Stack<Enemy>();
         Random rnd = new Random();
         Troll troll = new Troll();
@@ -21,9 +21,7 @@ class Enemy : Creature{
         enemies.Push(troll);
 
         for(int i = 0; i < amountOfGoblins ; i++){
-            if(randomEnemies){
-                enemies.Push(new Goblin(rnd.Next(3 - 1)));
-            }
+            enemies.Push(new Goblin(rnd.Next(3 - 1)));
         }
         return enemies;
     }

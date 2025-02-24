@@ -13,6 +13,10 @@ class Player : Creature{
 
     }
 
+    public void CheckSurprised(){
+        Surprised = (new Random().Next(1, 100) < Globals.SurprisedChance);
+    }
+
     public int CalcDamage (){
             int damage = this.Attack();
             this.AttackPrint(damage);
