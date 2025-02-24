@@ -45,30 +45,14 @@ class Game{
         }
 
         if(invalidSelection){
-            Console.WriteLine("invalid selection... May god have mercy as you find none here.");
-            Console.WriteLine();
+            Display.InvalidDifficultySelectionMessage();
         }
         return Enemy.initEnemies(goblinCount, randomized, randomizedBoss);
     }
 
 
-    static void PrintWelcomeMessage(){
-        Console.WriteLine("Welcome to the troll cave.");
-        Console.WriteLine("It's currently occupied by a troll, and it's famly (Goblins)");
-        Console.WriteLine("You've been tasked to clear out the cave.");
-        Console.WriteLine("Remember, you can always type {exit} or {quit} to exit");
-        Console.WriteLine("---------------------------------------------------------------\n");
-    }
-
-
     static void SelectDifficulty(){
-        Console.WriteLine("Type and press enter to select.");
-        Console.WriteLine("Only the first character actually matters and valid characters are found between '[]'");
-        Console.WriteLine("What difficulty do you want to play?");
-        Console.WriteLine("[E]asy - 4 static enemies + the troll");
-        Console.WriteLine("[M]edium - 3 random enemies + the troll");
-        Console.WriteLine("[H]ard - 4 random enemies + the troll");
-        Console.WriteLine("[I] want to test my luck - 5 random enemies + randomized troll stats");
+        Display.DifficultyMessage();
         Enemies = StartInput();
         Console.Clear();
     }
@@ -134,6 +118,7 @@ class Game{
         return Action.nothing;
     }
     static void PlayerAction(){
+        if (CurrentEnemy == null) return; // Will never happen, but warnings are annoying.
         Action playerAction = GetPlayerAction();
         switch(playerAction){
             case Action.attack:
@@ -150,15 +135,14 @@ class Game{
 
             break;
             case Action.status: 
-                Console.WriteLine($"You currently have: {_player.Health}hp left");
-                Console.WriteLine($"Your shield's condition is: {_player.ShieldConditionText()}");
+                Display.StatusMessage(_player);
             break;
             default:
-                Console.WriteLine("You do nothing");
+                Display.DoNothingMessage();
             break;
         }
         if(playerAction == Action.examine){
-            CurrentEnemy.PrintState();
+            Display.PrintState(CurrentEnemy);
         }
     }
 
@@ -196,21 +180,21 @@ class Game{
         CreatePlayer();
         bool gameRunning = true;
         PlayerTurn = true;
-        PrintWelcomeMessage();
+        Display.PrintWelcomeMessage();
         while(gameRunning){
             switch(GameTurns()){
                 case State.running:
                 break;
                 case State.won:
                     gameRunning = false;
-                    Console.WriteLine("won");
+                    Display.VictoryMessage();
                     break;
                 case State.lose: 
                     gameRunning = false;
                     if(Enemies != null && Enemies.Count == 0){
-                        Console.WriteLine("but, you died..");
+                        Display.TieMessage();
                     }else{
-                        Console.WriteLine("You died...");
+                        Display.LoseMessage();
                     }
                 break;
             }

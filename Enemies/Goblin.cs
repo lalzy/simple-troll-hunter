@@ -18,6 +18,13 @@ class Goblin : Enemy{
             this.BaseHealth = 15;
             this.MinDamage = 2;
             this.MaxDamage = 5;
+        // Goblin Champion - Mini Boss
+        }else if (rank == 3){
+            this.Name = "Goblin Champion";
+            this.Health = 30;
+            this.BaseHealth = 30;
+            this.MinDamage = 2;
+            this.MaxDamage = 10;
         }else{
             this.Health = 100;
             this.BaseHealth = 100;
