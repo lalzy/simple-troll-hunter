@@ -8,7 +8,6 @@ class Game{
         string? input = Console.ReadLine();
         if(input == null) Environment.Exit(-1);
         bool invalidSelection = false;
-        bool randomizedBoss = false;
         switch(input.ToLower()[0]){
             case 'e':
                 Globals.SurprisedChance = 0;
@@ -21,17 +20,14 @@ class Game{
             case 'h':
                 Cave.GenerateCave(2, 10);
                 Globals.SurprisedChance = 50;
-                randomizedBoss = true;
                 break;
             case 'i':
                 Cave.GenerateCave(2, 10);
                 Globals.Player.SetHealth(Globals.Player.Health - 20);
                 Globals.SurprisedChance = 50;
-                randomizedBoss = true;
                 break;
             default:
-                Cave.GenerateCave(5, 10);
-                randomizedBoss = true;
+                Cave.GenerateCave(5, 10, true);
                 Globals.Player.SetHealth(Globals.Player.Health - 20); 
                 Globals.Player.SetShieldHealth(2);
                 Globals.SurprisedChance = 100;

@@ -10,10 +10,10 @@ static class Cave{
     static private Stack<RoomType>[]? _cave;
     static private int _floor = 0;
 
-    static public void GenerateCave (int floors = 2, int rooms = 10){
+    static public void GenerateCave (int floors = 2, int rooms = 10, bool randomizedBoss = false){
         Random rnd = new Random();
         _cave = new Stack<RoomType>[floors];
-        Enemy.PopulateBosses(floors);
+        Enemy.PopulateBosses(floors, randomizedBoss);
         for(int floor = 0; floor < floors ; floor++){
             _cave[floor] = new Stack<RoomType>();
             _cave[floor].Push(RoomType.boss); // Boss added to the last room of every floor.

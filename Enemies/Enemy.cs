@@ -1,13 +1,13 @@
 class Enemy : Creature{
 
-    public static void PopulateBosses(int floors){
+    public static void PopulateBosses(int floors, bool randomizedBoss){
         Random rnd = new Random();
         Globals.Bosses =  new Stack<dynamic>();
-        Globals.Bosses.Push(new Troll());
+        Globals.Bosses.Push(new Troll(randomizedBoss));
         for(int i = 0; i < floors-1 ; i++){
             switch(rnd.Next(2)){
                 case 0:
-                    Globals.Bosses.Push(new GoblinBoss(0));
+                    Globals.Bosses.Push(new GoblinBoss(0, randomizedBoss));
                 break;
             }
         }
