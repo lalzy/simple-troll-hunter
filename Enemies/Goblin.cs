@@ -2,32 +2,22 @@ class Goblin : Enemy{
     public Goblin(int rank){
         if(rank == 0){
             this.Name = "Generic Goblin";
-            this.Health = 10;
-            this.BaseHealth = 10;
+            this.SetHealth(10);
             this.MinDamage = 1;
             this.MaxDamage = 5;
         }else if(rank == 1){
             this.Name = "Though Goblin";
-            this.Health = 10;
-            this.BaseHealth = 10;
+            this.SetHealth(10);
             this.MinDamage = 3;
             this.MaxDamage = 5;
         }else if (rank == 2){
             this.Name = "Shield-wearing Goblin";
-            this.Health = 15;
-            this.BaseHealth = 15;
+            this.SetHealth(15);
             this.MinDamage = 2;
             this.MaxDamage = 5;
         // Goblin Champion - Mini Boss
-        }else if (rank == 3){
-            this.Name = "Goblin Champion";
-            this.Health = 30;
-            this.BaseHealth = 30;
-            this.MinDamage = 2;
-            this.MaxDamage = 10;
         }else{
-            this.Health = 100;
-            this.BaseHealth = 100;
+            this.SetHealth(100);
             this.MinDamage = 100;
             this.MaxDamage = 100;
         }

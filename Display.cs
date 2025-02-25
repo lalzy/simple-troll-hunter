@@ -6,6 +6,10 @@ class Display{
         Console.Clear();
     }
 
+    static public void NewFloorText(){
+        Console.WriteLine("You enter a new floor");
+    }
+
     static public void CreatureDiesMessage(Player player){
         Console.WriteLine("Player died!");
     }
@@ -13,6 +17,8 @@ class Display{
     static public void SpawnEnemyText(Enemy enemy){
         if(enemy.GetType() == typeof(Troll)){
             Console.WriteLine("The troll appears!");
+        }else if (enemy.GetType() == typeof(GoblinBoss)){
+            Console.WriteLine("Room is guarded by a big Goblin!");
         }else{
             Console.WriteLine($"an {enemy.Name} emerge from the shadows!");
         }
@@ -22,6 +28,7 @@ class Display{
         if(playerTurn){
             Console.WriteLine($"You're facing a, <{currentEnemy.Name}>");
         }
+        Console.WriteLine($"HP: {player.Health}");
         if(player.Surprised && playerTurn){
             playerTurn = false;
             Console.WriteLine("You were surprised! Lost a turn");
@@ -34,8 +41,8 @@ class Display{
         if(player.GetShieldHealth() > 0 && !player.IsBlocking){
             string extra = playerTurn ? "(and do 2 attack rolls, keeping the highest)" : "";
             Console.WriteLine($"[B]lock with your shield{extra}.");
+            Console.WriteLine($"     Shield Condition:{player.ShieldConditionText()}");
         }
-        Console.WriteLine("[C]heck your [S]tatus");
         string text = playerTurn ? "skip" : "continue";
         Console.WriteLine($"press enter to {text}");
         

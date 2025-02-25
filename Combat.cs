@@ -71,8 +71,6 @@ static class Combat{
         // player can always do these actions.
         if(input[0] == 'b' && !Globals.Player.Surprised){
             return Action.block;
-        }else if (input[0] == 'c' || input[0]=='s'){
-            return Action.status;
         }
 
         return Action.nothing;

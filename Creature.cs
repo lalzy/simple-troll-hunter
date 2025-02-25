@@ -9,13 +9,24 @@ class Creature {
     public int MinDamage;
     public int MaxDamage;
 
-
     public int Attack(){
         int damage = new Random().Next(MinDamage, MaxDamage);
         return damage;
     }
 
+    public void Heal(int amount){
+        if(amount > BaseHealth){
+            this.Health = this.BaseHealth;
+        }else{
+            this.Health = amount;
+        }
+    }
     
+    public void SetHealth(int health){
+        this.Health = health;
+        this.BaseHealth = health;
+    }
+
     public bool IsDead(){
         return this.Health <= 0;
     }

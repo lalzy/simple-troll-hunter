@@ -5,16 +5,40 @@ static class Cave{
         endofCave = -1,
         empty = 0,
         enemy = 1,
-        boss = 2,
+        boss = 10,
     }
-    static RoomType[] floor = {RoomType.empty, RoomType.enemy, RoomType.enemy, 
-    RoomType.empty, RoomType.enemy, RoomType.empty, RoomType.empty, RoomType.enemy, 
-    RoomType.enemy, RoomType.boss};
-    static public int _room = 0;
- 
+    static private Stack<RoomType>[] _cave;
+    static private int _floor = 0;
+
+    static public void GenerateCave (int floors = 2, int rooms = 10){
+        Random rnd = new Random();
+        _cave = new Stack<RoomType>[floors];
+        Enemy.PopulateBosses(floors);
+        for(int floor = 0; floor < floors ; floor++){
+            _cave[floor] = new Stack<RoomType>();
+            _cave[floor].Push(RoomType.boss); // Boss added to the last room of every floor.
+
+            for (int room = 0; room < rooms - 1; room++){
+                switch(rnd.Next(3)){ // Reflect room types.
+                    case 0:
+                    case 1:
+                        _cave[floor].Push(RoomType.empty);
+                    break;
+                    case 2:
+                        _cave[floor].Push(RoomType.enemy);
+                    break;
+                }
+            }
+        }
+    }
+
     static public RoomType CurrentRoom(){
-        if(_room < floor.Length){
-            return (RoomType) floor[_room++];
+        if(_cave[_floor].Count > 0){
+            return _cave[_floor].Pop();
+        }else if(_floor < _cave.Length - 1){
+            _floor++;
+            Display.NewFloorText();
+            return _cave[_floor].Pop();
         }else{
             return RoomType.endofCave;
         }

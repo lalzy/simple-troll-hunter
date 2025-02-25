@@ -12,22 +12,28 @@ class Game{
         switch(input.ToLower()[0]){
             case 'e':
                 Globals.SurprisedChance = 0;
+                Cave.GenerateCave(1, 10);
                 break;
             case 'm':
+                Cave.GenerateCave(2, 10);
                 Globals.SurprisedChance = 30;
                 break;
             case 'h':
+                Cave.GenerateCave(2, 10);
                 Globals.SurprisedChance = 50;
                 randomizedBoss = true;
                 break;
             case 'i':
-                Globals.Player.SetBaseHealth(Globals.Player.Health - 20);
+                Cave.GenerateCave(2, 10);
+                Globals.Player.SetHealth(Globals.Player.Health - 20);
                 Globals.SurprisedChance = 50;
                 randomizedBoss = true;
                 break;
             default:
+                Cave.GenerateCave(5, 10);
                 randomizedBoss = true;
-                Globals.Player.SetBaseHealth(Globals.Player.Health - 20, 2); // Start with a beaten up shield.
+                Globals.Player.SetHealth(Globals.Player.Health - 20); 
+                Globals.Player.SetShieldHealth(2);
                 Globals.SurprisedChance = 100;
                 invalidSelection = true;
             break;
@@ -54,7 +60,7 @@ class Game{
         explore = 1,
         combat = 2,
     }
-
+    static int rooms = 1;
     static void GameTurns ()
     {
         switch(Game.CurrentState){
@@ -92,12 +98,13 @@ class Game{
             case State.explore:
                 Cave.RoomType currentRoom = Cave.CurrentRoom();
                 Enemy.SpawnEnemy(currentRoom);
+                Console.WriteLine($"room: {rooms++}");
                 if (Globals.CurrentEnemy != null){
                     Game.CurrentState = State.combat;
                 }else if(Cave.RoomType.endofCave == currentRoom){
                     CurrentState = State.won;
                 }else{
-                    Console.WriteLine($"Room was empty.. -{Cave._room}");
+                    Console.WriteLine($"Room was empty..");
                     Console.ReadKey();
                     Console.Clear();
                 }

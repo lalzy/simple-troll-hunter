@@ -13,12 +13,16 @@ class Player : Creature{
 
     }
 
-    public void SetBaseHealth(int health, int shieldHealth = 3){
-        this.Health = health;
-        this.BaseHealth = health;
-        this._shieldHealth = shieldHealth;
+
+    public void Rest(){
+        int healAmount = (int) Math.Round(this.BaseHealth * .20);
+
+        this.Heal(healAmount);
     }
 
+    public void SetShieldHealth(int health = 3){
+        this._shieldHealth = health;
+    }
     public void CheckSurprised(){
         Surprised = (new Random().Next(1, 100) < Globals.SurprisedChance);
     }
