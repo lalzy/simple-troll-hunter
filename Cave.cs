@@ -7,7 +7,7 @@ static class Cave{
         enemy = 1,
         boss = 10,
     }
-    static private Stack<RoomType>[] _cave;
+    static private Stack<RoomType>[]? _cave;
     static private int _floor = 0;
 
     static public void GenerateCave (int floors = 2, int rooms = 10){
@@ -33,6 +33,7 @@ static class Cave{
     }
 
     static public RoomType CurrentRoom(){
+        if(_cave == null) return RoomType.endofCave;
         if(_cave[_floor].Count > 0){
             return _cave[_floor].Pop();
         }else if(_floor < _cave.Length - 1){

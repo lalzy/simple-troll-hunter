@@ -2,8 +2,9 @@ class Enemy : Creature{
 
     public static void PopulateBosses(int floors){
         Random rnd = new Random();
+        Globals.Bosses =  new Stack<dynamic>();
         Globals.Bosses.Push(new Troll());
-        for(int i = 0; i < floors ; i++){
+        for(int i = 0; i < floors-1 ; i++){
             switch(rnd.Next(2)){
                 case 0:
                     Globals.Bosses.Push(new GoblinBoss(0));
@@ -17,7 +18,11 @@ class Enemy : Creature{
         if(Cave.RoomType.enemy == room){
             enemy = new Goblin(new Random().Next(3 - 1));
         }else if(Cave.RoomType.boss == room){
-            enemy = Globals.Bosses.Pop();
+            if(Globals.Bosses == null){
+                enemy = new Goblin(new Random().Next(3- 1));
+            }else{
+                enemy = Globals.Bosses.Pop();
+            }
         }
         Globals.Player.CheckSurprised();
         if(enemy != null){

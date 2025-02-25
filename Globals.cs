@@ -4,6 +4,6 @@ class Globals{
     public static Enemy? CurrentEnemy;
     public static bool PlayerTurn;
 
-    public static Stack<dynamic> Bosses = new Stack<dynamic>();
+    public static Stack<dynamic>? Bosses;
 
 }
