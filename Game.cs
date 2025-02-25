@@ -11,7 +11,7 @@ class Game{
         switch(input.ToLower()[0]){
             case 'e':
                 Globals.SurprisedChance = 0;
-                Cave.GenerateCave(1, 10);
+                Cave.GenerateCave(3, 3);
                 break;
             case 'm':
                 Cave.GenerateCave(2, 10);

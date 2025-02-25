@@ -18,8 +18,9 @@ class Creature {
         if(amount > BaseHealth){
             this.Health = this.BaseHealth;
         }else{
-            this.Health = amount;
+            this.Health += amount;
         }
+        Console.WriteLine();
     }
     
     public void SetHealth(int health){

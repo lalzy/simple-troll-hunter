@@ -3,11 +3,12 @@ using System.Security.Cryptography;
 class Player : Creature{
     private Dictionary<string, int> _inventory = new Dictionary<string,int>();
     private int _shieldHealth = 3;
+    private int _shieldHealthBase = 3;
     public bool IsBlocking = false;
     public int BlockRoll = 0;
     public bool Surprised = false;
     public  Player(int hp, int minDamage, int maxDamage){
-        this.Health = hp;
+        this.SetHealth(hp);
         this.MinDamage = minDamage;
         this.MaxDamage = maxDamage;
 
@@ -15,14 +16,26 @@ class Player : Creature{
 
 
     public void Rest(){
+        Display.RestText();
+
         int healAmount = (int) Math.Round(this.BaseHealth * .20);
 
+        if (_shieldHealth > 0 && _shieldHealth < _shieldHealthBase){
+            _shieldHealth++;
+        }
         this.Heal(healAmount);
     }
 
     public void SetShieldHealth(int health = 3){
-        this._shieldHealth = health;
+        // use _shieldHealthBase that defines max-shield health unless health is passed.
+        if(health > this._shieldHealthBase){
+            this._shieldHealth = health;
+            this._shieldHealthBase = health;
+        }else{
+            this._shieldHealth = health;
+        }
     }
+
     public void CheckSurprised(){
         Surprised = (new Random().Next(1, 100) < Globals.SurprisedChance);
     }

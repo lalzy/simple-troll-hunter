@@ -1,4 +1,8 @@
 class Display{
+    static public void RestText(){
+        Console.WriteLine("You rest");
+    }
+
     static public void CreatureDiesMessage(Enemy enemy){
         Console.WriteLine($"You killed the {enemy.Name}!");
         Console.WriteLine("press {any} key to continue.");

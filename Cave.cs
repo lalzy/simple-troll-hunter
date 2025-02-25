@@ -39,6 +39,7 @@ static class Cave{
         }else if(_floor < _cave.Length - 1){
             _floor++;
             Display.NewFloorText();
+            Globals.Player.Rest();
             return _cave[_floor].Pop();
         }else{
             return RoomType.endofCave;
