@@ -82,7 +82,6 @@ class Game{
             case State.start:
                 SelectDifficulty();
                 CreatePlayer();
-                Globals.Player.Health -= 10;
                 Display.PrintWelcomeMessage();
                 CurrentState = State.explore;
                 Console.WriteLine("procceed inside?");
