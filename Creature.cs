@@ -18,6 +18,8 @@ class Creature {
         return damage;
     }
 
+    
+
     /// <summary>
     ///  Restore health of the creature.
     /// </summary>

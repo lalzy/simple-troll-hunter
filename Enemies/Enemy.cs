@@ -1,7 +1,7 @@
 class Enemy : Creature{
 
     private static Stack<dynamic>? _bosses;
-    public static Enemy CurrentEnemy;
+    public static Enemy? CurrentEnemy;
 
     /// <summary>
     /// Initialize the boss stack, which depends on the amount of floors.
@@ -36,8 +36,8 @@ class Enemy : Creature{
                 CurrentEnemy = _bosses.Pop();
             }
         }
-        Globals.Player.CheckSurprised();
         if(CurrentEnemy != null){
+            Globals.Player.CheckSurprised();
             Display.SpawnEnemyText(CurrentEnemy);
         }
     }

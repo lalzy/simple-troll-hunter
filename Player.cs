@@ -5,6 +5,7 @@ class Player : Creature{
     /// Not used, yet.
     /// </summary>
     private Dictionary<string, int> _inventory = new Dictionary<string,int>();
+    private int _food = 3;
     /// <summary>
     ///  How many times you can block.
     /// </summary>
@@ -24,17 +25,66 @@ class Player : Creature{
     }
 
     /// <summary>
-    /// Player rest mechanic
+    /// Gets the max health of the shield.
     /// </summary>
-    public void Rest(){
-        Display.Rooms.Rest();
+    /// <returns>The max-health of the shield</returns>
+    public int GetShieldHealthBase(){
+        return _shieldHealthBase;
+    }
 
-        int healAmount = (int) Math.Round(this.BaseHealth * .20);
-
+    /// <summary>
+    /// Repairs the shield if it's damaged.
+    /// </summary>
+    private void RepairShield(){
         if (_shieldHealth > 0 && _shieldHealth < _shieldHealthBase){
             _shieldHealth++;
         }
-        this.Heal(healAmount);
+    }
+
+    /// <summary>
+    /// Handles the player-input to choose what to do.
+    /// </summary>
+    /// <returns>Returns true if we did a valid rest, otherwise returns false (for text feedback to player only)</returns>
+    private bool restInput(){
+        string? input = Console.ReadLine();
+        if (input == null) Environment.Exit(-1);
+        else if (input == "") input = " ";
+
+        // Handle inputing.
+        switch(char.ToLower(input[0])){
+            case 'h':
+                this.Heal((int) Math.Round(this.BaseHealth * .20));
+                return true;
+            case 'r':
+            case 'f':
+                RepairShield();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /// <summary>
+    /// Player rest mechanic
+    /// </summary>
+    public void Rest(){
+        if(_food > 0){
+            bool validRest = false;
+            if(Display.Rooms.RestMenu(_food)){
+                validRest = restInput();
+                Console.Clear();
+            }else{
+                return;
+            }
+            if(!validRest){
+                Display.Rooms.InvalidRestSelection();
+            }else{
+                Display.Rooms.Resting();
+            }
+        }else{
+            Display.Rooms.NoFoodText();
+        }
+
     }
 
     /// <summary>

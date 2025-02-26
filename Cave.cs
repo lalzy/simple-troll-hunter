@@ -82,11 +82,13 @@ static class Cave{
         switch(_currentRoom){
             case RoomType.empty:
                 Display.Rooms.Empty();
+                Display.PressAnyKey();
                 Console.ReadKey();
                 Console.Clear();
             break;
             case RoomType.rest:
                 Globals.Player.Rest();
+                Display.PressAnyKey();
                 Console.ReadKey();
                 Console.Clear();
             break;

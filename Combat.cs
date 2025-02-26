@@ -3,12 +3,12 @@ static class Combat{
     /// Starts a combat-turn.
     /// </summary>
     /// <param name="CurrentState">Current game-state. Will default to exploration if enemy doesn't exist, or is dead</param>
-    static public void CombatTurn(Game.State CurrentState){
+    static public Game.State CombatTurn(Game.State CurrentState){
         // Check if enemy is dead. If it is, make it player turn and spawn new enemy.
         if(Enemy.CurrentEnemy == null || Enemy.CurrentEnemy.IsDead()){
+            Enemy.CurrentEnemy = null;
             Globals.PlayerTurn = true;
-            CurrentState = Game.State.explore;
-            return;
+            return Game.State.explore;
         }
         // Get player action.
         PlayerAction();
@@ -20,6 +20,7 @@ static class Combat{
         if(Globals.Player.Health <= 0){
             CurrentState = Game.State.lose;
         }
+        return CurrentState;
     }
 
     /// <summary>
@@ -56,7 +57,6 @@ static class Combat{
     /// </summary>
     /// <returns>Action player choose to perform</returns>
     static Action GetPlayerAction(){
-
         Display.PlayerMenu(Globals.PlayerTurn, Enemy.CurrentEnemy, Globals.Player);
         string? input = Console.ReadLine();
         Console.Clear();

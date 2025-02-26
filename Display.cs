@@ -2,6 +2,9 @@
 /// We maintain text here for easy expanding/rewriting.
 /// </summary>
 class Display{
+    public static void PressAnyKey(){
+        Console.WriteLine("press any key to continue");
+    }
 
     public static string ShieldConditionText(){
         switch (Globals.Player.GetShieldHealth()){
@@ -130,8 +133,11 @@ class Display{
     }
 
 
-    static public void PrintState(Creature creature){
-        if(creature.BaseHealth == creature.Health){
+    static public void PrintState(Creature? creature){
+        if(creature == null){ 
+            Console.WriteLine("There is no creature here");
+            return;
+        }else if(creature.BaseHealth == creature.Health){
             Console.WriteLine("It's not injured at all!");
         }else if(creature.BaseHealth / 2 < creature.Health){
             Console.WriteLine("It's barely injured");
@@ -172,8 +178,35 @@ class Display{
             Console.WriteLine("Room was empty");
         }
 
-        public static void Rest(){
-            Console.WriteLine("You rest");
+        public static void Resting(){
+            Console.WriteLine("You rested");
+        }
+
+        public static bool RestMenu(int food){
+            bool hasSelection = false;
+            Console.WriteLine($"This looks like a great place to rest (Rest available: {food})");
+            if(Globals.Player.Health < Globals.Player.BaseHealth){
+                hasSelection = true;
+                Console.WriteLine("[H]eal - Tend to your wounds");
+            }else if(Globals.Player.GetShieldHealth() < Globals.Player.GetShieldHealthBase()){
+                hasSelection = true;
+                Console.WriteLine("[F]ix your shield.");
+            }
+            
+            if (!hasSelection){
+                Console.WriteLine("But, you have no need to rest!");
+                return false;
+            }else{
+                return true;
+            }
+        }
+
+        public static void InvalidRestSelection(){
+            Console.WriteLine("You choose to do nothing.");
+        }
+
+        public static void NoFoodText(){
+            Console.WriteLine("looks like the perfect spot to rest, unfortunately, you have no more food...");
         }
     }
 
