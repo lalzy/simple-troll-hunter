@@ -1,4 +1,9 @@
 class GoblinBoss : Enemy{
+    /// <summary>
+    /// Goblin bosses
+    /// </summary>
+    /// <param name="index">The index of which boss we want</param>
+    /// <param name="randomizedBoss">Wether the boss should have random stats or not</param>
     public GoblinBoss(int index = 0, bool randomizedBoss = false){
         if(randomizedBoss){
             Random rnd = new Random();

@@ -1,9 +1,13 @@
 static class Combat{
-    static public void CombatTurn(){
+    /// <summary>
+    /// Starts a combat-turn.
+    /// </summary>
+    /// <param name="CurrentState">Current game-state. Will default to exploration if enemy doesn't exist, or is dead</param>
+    static public void CombatTurn(Game.State CurrentState){
         // Check if enemy is dead. If it is, make it player turn and spawn new enemy.
-        if(Globals.CurrentEnemy == null || Globals.CurrentEnemy.IsDead()){
+        if(Enemy.CurrentEnemy == null || Enemy.CurrentEnemy.IsDead()){
             Globals.PlayerTurn = true;
-            Game.CurrentState = Game.State.explore;
+            CurrentState = Game.State.explore;
             return;
         }
         // Get player action.
@@ -14,25 +18,31 @@ static class Combat{
         // Switch turn.
         Globals.PlayerTurn = !Globals.PlayerTurn;
         if(Globals.Player.Health <= 0){
-            Game.CurrentState = Game.State.lose;
+            CurrentState = Game.State.lose;
         }
     }
 
+    /// <summary>
+    /// Ai's turn to act.
+    /// </summary>
     static void AiAction(){
-        if(!Globals.PlayerTurn && Globals.CurrentEnemy != null){
+        if(!Globals.PlayerTurn && Enemy.CurrentEnemy != null){
             Globals.Player.Surprised = false;
 
-            int damage = Globals.CurrentEnemy.Attack();
+            int damage = Enemy.CurrentEnemy.Attack();
             if(Globals.Player.IsBlocking){
                 Globals.Player.IsBlocking = false;
                 Globals.Player.Block(damage);
             }else{
-                Globals.Player.TakeDamagePrint(damage);
+                Display.TakeDamagePrint(damage);
                 Globals.Player.Health -= damage;
             }
         }
     }
 
+    /// <summary>
+    /// Valid action keys
+    /// </summary>
     enum Action {
         nothing = ' ',
         attack = 'a',
@@ -41,10 +51,13 @@ static class Combat{
         examine = 'e',
     }
 
+    /// <summary>
+    /// Gets the action the player wish to perform
+    /// </summary>
+    /// <returns>Action player choose to perform</returns>
     static Action GetPlayerAction(){
-        if(Globals.CurrentEnemy == null) return Action.nothing; // Can never happen, but it prevents annoying Warnings.
 
-        Display.PlayerMenu(Globals.PlayerTurn, Globals.CurrentEnemy, Globals.Player);
+        Display.PlayerMenu(Globals.PlayerTurn, Enemy.CurrentEnemy, Globals.Player);
         string? input = Console.ReadLine();
         Console.Clear();
         
@@ -75,12 +88,14 @@ static class Combat{
 
         return Action.nothing;
     }
+    /// <summary>
+    /// Executes player's action based on what he choose to do.
+    /// </summary>
     static void PlayerAction(){
-        if (Globals.CurrentEnemy == null) return; // Will never happen, but warnings are annoying.
         Action playerAction = GetPlayerAction();
         switch(playerAction){
             case Action.attack:
-                Globals.CurrentEnemy.Health -= Globals.Player.CalcDamage();
+                Enemy.CurrentEnemy.Health -= Globals.Player.CalcDamage();
             break;
             case Action.block: 
                 // add drinking.
@@ -99,8 +114,9 @@ static class Combat{
                 Display.DoNothingMessage();
             break;
         }
+
         if(playerAction == Action.examine){
-            Display.PrintState(Globals.CurrentEnemy);
+            Display.PrintState(Enemy.CurrentEnemy);
         }
     }
 

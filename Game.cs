@@ -2,8 +2,14 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks.Dataflow;
 
 class Game{
-    public static Game.State CurrentState;
+    /// <summary>
+    /// The current game-state (like exploring, combat, etc)
+    /// </summary>
+    private static Game.State CurrentState;
 
+    /// <summary>
+    /// player input for the difficulty.
+    /// </summary>
     static void StartInput(){
         string? input = Console.ReadLine();
         if(input == null) Environment.Exit(-1);
@@ -11,7 +17,7 @@ class Game{
         switch(input.ToLower()[0]){
             case 'e':
                 Globals.SurprisedChance = 0;
-                Cave.GenerateCave(3, 3);
+                Cave.GenerateCave( 1, 10);
                 break;
             case 'm':
                 Cave.GenerateCave(2, 10);
@@ -40,14 +46,18 @@ class Game{
         }
     }
 
-
+    /// <summary>
+    /// Display the difficulty selection menu, and query the player for the choice.
+    /// </summary>
     static void SelectDifficulty(){
         Display.DifficultyMessage();
         StartInput();
         Console.Clear();
     }
 
-
+    /// <summary>
+    /// Gameloop states
+    /// </summary>
     public enum State {
         abandoned = -3,
         lose = -2,
@@ -56,8 +66,16 @@ class Game{
         explore = 1,
         combat = 2,
     }
+    /// <summary>
+    /// How many rooms we've gone through (due to us lacking unique text for empty rooms)
+    /// </summary>
     static int rooms = 1;
-    static void GameTurns ()
+
+    /// <summary>
+    /// The various Game-states 
+    /// </summary>
+    /// <returns>Wether the game loop should stop or not</returns>
+    static bool GameTurns ()
     {
         switch(Game.CurrentState){
             case State.start:
@@ -75,53 +93,64 @@ class Game{
                     if (input == null) Environment.Exit(-1);
                     if (input[0] == 'n'){
                         CurrentState = State.abandoned;
-                        return;
+                        return true;
                     }else if (input[0] == 'y'){
                         CurrentState = State.explore;
-                        return;
+                        return true;
                     }
                     Console.WriteLine("Please enter yes or no!");
                 }
             case State.won:
-                _gameRunning = false;
+                return false;
                 Display.VictoryMessage();
                 break;
             case State.abandoned:
             case State.lose: 
-                _gameRunning = false;
+                return false;
                 Display.LoseMessage();
                 break;
             case State.explore:
-                Cave.RoomType currentRoom = Cave.CurrentRoom();
-                Enemy.SpawnEnemy(currentRoom);
-                Console.WriteLine($"room: {rooms++}");
-                if (Globals.CurrentEnemy != null){
-                    Game.CurrentState = State.combat;
-                }else if(Cave.RoomType.endofCave == currentRoom){
-                    CurrentState = State.won;
-                }else{
-                    Console.WriteLine($"Room was empty..");
-                    Console.ReadKey();
-                    Console.Clear();
-                }
+                CurrentState = Cave.HandleRoomExploration(rooms++);
                 break;
             case State.combat:
-                Combat.CombatTurn();
+                Combat.CombatTurn(CurrentState);
                 break;
         }
+        return true;
     }
+    /// <summary>
+    /// Initializes the player.
+    /// </summary>
     static void CreatePlayer(){
         Globals.Player = new Player(50, 5, 10);
     }
-    static bool _gameRunning = true;
+
+    /// <summary>
+    /// The main game-loop.
+    /// </summary>
+    /// <returns>Wether to exit the program or not</returns>
     public static bool MainLoop(){
+        bool gameRunning = true;
         CurrentState = State.start;
+
         // difficulty selection
         Globals.PlayerTurn = true;
-        while(_gameRunning){
-            GameTurns();
+
+        while(gameRunning){
+            gameRunning = GameTurns();
         }
-        return false;
+        ConsoleKey input;
+        do{
+            Console.WriteLine("Do you want to go again?(Y)es, (N)o.");
+            input = Console.ReadKey(true).Key;
+        }while(input != ConsoleKey.N && input != ConsoleKey.Y);
+
+        // We restart the game if yes.
+        if(input == ConsoleKey.N){
+            return false;
+        }else{
+            return true;
+        }
     }
 
 }

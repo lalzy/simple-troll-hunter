@@ -1,5 +1,9 @@
 class Goblin : Enemy{
-    public Goblin(int rank){
+    /// <summary>
+    /// Generate a gobling
+    /// </summary>
+    /// <param name="rank">Rank = The type of goblin we want to spawn. Currently 3 types (index'ed), out of bounds will make an unbeatable goblin</param>
+    public Goblin(int rank = 0){
         if(rank == 0){
             this.Name = "Generic Goblin";
             this.SetHealth(10);
@@ -21,11 +25,5 @@ class Goblin : Enemy{
             this.MinDamage = 100;
             this.MaxDamage = 100;
         }
-    }
-    public Goblin(){
-        this.Health = 10;
-        this.BaseHealth = 10;
-        this.MinDamage = 1;
-        this.MaxDamage = 5;
     }
 }

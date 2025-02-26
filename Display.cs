@@ -1,6 +1,21 @@
+/// <summary>
+/// We maintain text here for easy expanding/rewriting.
+/// </summary>
 class Display{
-    static public void RestText(){
-        Console.WriteLine("You rest");
+
+    public static string ShieldConditionText(){
+        switch (Globals.Player.GetShieldHealth()){
+            case 0:
+                return "You have no shield";
+            case 1:
+                return "It's on it's last legs";
+            case 2:
+                return "It's seen some use";
+            case 3:
+                return "it's brand new!";
+            default:
+                return "";
+        }
     }
 
     static public void CreatureDiesMessage(Enemy enemy){
@@ -45,15 +60,50 @@ class Display{
         if(player.GetShieldHealth() > 0 && !player.IsBlocking){
             string extra = playerTurn ? "(and do 2 attack rolls, keeping the highest)" : "";
             Console.WriteLine($"[B]lock with your shield{extra}.");
-            Console.WriteLine($"     Shield Condition:{player.ShieldConditionText()}");
+            Console.WriteLine($"     Shield Condition:{ShieldConditionText()}");
         }
         string text = playerTurn ? "skip" : "continue";
         Console.WriteLine($"press enter to {text}");
         
         Console.Write(">> ");
     }
-    
+
+
+    public static void PlayerAttack(int damage){
+        if (damage <= (Globals.Player.MaxDamage / 4)){
+            Console.WriteLine("You barely scratched it..");
+        }else if (damage <= (Globals.Player.MaxDamage / 2)){
+            Console.WriteLine("An alright hit");
+        }else if(damage == Globals.Player.MaxDamage){
+            Console.WriteLine("A perfect hit!");
+        }else{
+            Console.WriteLine("A good hit!");
+        }
+    }
+
+    public static void TakeDamagePrint(int damage){
+        if (damage <= (Globals.Player.MaxDamage / 4)){
+            Console.WriteLine("He barely scratched you..");
+        }else if (damage <= (Globals.Player.MaxDamage / 2)){
+            Console.WriteLine("That hurt");
+        }else if(damage == Globals.Player.MaxDamage){
+            Console.WriteLine("That's not good...");
+        }else{
+            Console.WriteLine("You should learn to dodge...");
+        }
+    }
+
     static public void ShieldBlockMessage(){
+        if(Globals.Player.GetShieldHealth() == 1){
+            Console.WriteLine("You get ready to block with what remains of your shield, better make it count!");
+        }else if(Globals.Player.GetShieldHealth() == 0){
+            Console.WriteLine("block with what? You have no shield anymore.");
+        }else{
+            Console.WriteLine("You get ready to block with the shield");
+        }
+
+    }
+    static public void BlockedEnemyMessage(){
         Console.WriteLine("You blocked the attack!");
     }
 
@@ -76,7 +126,7 @@ class Display{
 
     static public void StatusMessage(Player player){
         Console.WriteLine($"You currently have: {player.Health}hp left");
-        Console.WriteLine($"Your shield's condition is: {player.ShieldConditionText()}");
+        Console.WriteLine($"Your shield's condition is: {ShieldConditionText()}");
     }
 
 
@@ -115,6 +165,16 @@ class Display{
     static public void InvalidDifficultySelectionMessage(){
             Console.WriteLine("You choose to tempt the fates...");
             Console.WriteLine();
+    }
+
+    public static class Rooms{
+        public static void Empty(){
+            Console.WriteLine("Room was empty");
+        }
+
+        public static void Rest(){
+            Console.WriteLine("You rest");
+        }
     }
 
 }
