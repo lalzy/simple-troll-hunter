@@ -12,6 +12,7 @@ class Game{
     /// </summary>
     static void StartInput(){
         string? input = Console.ReadLine();
+        if (input == "") input = " ";
         if(input == null) Environment.Exit(-1);
         bool invalidSelection = false;
         switch(input.ToLower()[0]){
@@ -91,6 +92,7 @@ class Game{
                     string? input = Console.ReadLine();
                     Console.Clear();
                     if (input == null) Environment.Exit(-1);
+                    else if (input == "") input = " ";
                     if (input[0] == 'n'){
                         CurrentState = State.abandoned;
                         return true;
@@ -101,13 +103,13 @@ class Game{
                     Console.WriteLine("Please enter yes or no!");
                 }
             case State.won:
-                return false;
                 Display.VictoryMessage();
+                return false;
                 break;
             case State.abandoned:
             case State.lose: 
-                return false;
                 Display.LoseMessage();
+                return false;
                 break;
             case State.explore:
                 CurrentState = Cave.HandleRoomExploration(rooms++);
