@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 class Player : Creature{
     /// <summary>
     /// Not used, yet.
+    /// Idea is to keep the string-name of the item(like food, torch, shield) followed by it's 'amount' or 'uses'.
     /// </summary>
     private Dictionary<string, int> _inventory = new Dictionary<string,int>();
     private int _food = 3;
