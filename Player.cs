@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Security.Cryptography;
 
 class Player : Creature{
@@ -5,7 +6,8 @@ class Player : Creature{
     /// Not used, yet.
     /// Idea is to keep the string-name of the item(like food, torch, shield) followed by it's 'amount' or 'uses'.
     /// </summary>
-    private Dictionary<string, int> _inventory = new Dictionary<string,int>();
+    private Dictionary<string, Item> _inventory = new Dictionary<string, Item>();
+
     private int _food = 3;
     /// <summary>
     ///  How many times you can block.
@@ -154,8 +156,8 @@ class Player : Creature{
     /// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public int GetitemCount(string item){
-        return (from invItem in _inventory where invItem.Key.ToLower() == item.ToLower() select invItem.Value).FirstOrDefault();
-    }
+    // public int GetitemCount(string item){
+    //     return (from invItem in _inventory where invItem.Key.ToLower() == item.ToLower() select invItem.Value).FirstOrDefault();
+    // }
 
 }

@@ -132,7 +132,11 @@ class Display{
         Console.WriteLine($"Your shield's condition is: {ShieldConditionText()}");
     }
 
-
+    static public void PrintCaveEntranceMessage(){
+        Console.WriteLine("procceed inside?");
+        Console.WriteLine("[Y]es - to enter");
+        Console.WriteLine("[N]o - to head back");
+    }
     static public void PrintState(Creature? creature){
         if(creature == null){ 
             Console.WriteLine("There is no creature here");

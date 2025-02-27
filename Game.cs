@@ -84,9 +84,7 @@ class Game{
                 CreatePlayer();
                 Display.PrintWelcomeMessage();
                 CurrentState = State.explore;
-                Console.WriteLine("procceed inside?");
-                Console.WriteLine("[Y]es - to enter");
-                Console.WriteLine("[N]o - to head back");
+                Display.PrintCaveEntranceMessage();
 
                 while(true){
                     string? input = Console.ReadLine();

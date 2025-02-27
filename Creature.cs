@@ -24,13 +24,10 @@ class Creature {
     ///  Restore health of the creature.
     /// </summary>
     /// <param name="amount">Amount of health to recover</param>
-    public void Heal(int amount){
-        if(amount > BaseHealth){
-            this.Health = this.BaseHealth;
-        }else{
-            this.Health += amount;
-        }
-        Console.WriteLine();
+    public void Heal(int amount, bool overHeal = false){
+        Health += amount;
+
+        if(Health > BaseHealth && !overHeal) Health = BaseHealth;
     }
     
     /// <summary>
