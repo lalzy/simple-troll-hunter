@@ -6,6 +6,10 @@ class Display{
         Console.WriteLine("press any key to continue");
     }
 
+    public static void SurprisedMessage (){
+        Console.WriteLine("You were surprised, and failed to act!");
+    }
+
     public static string ShieldConditionText(){
         switch (Globals.Player.GetShieldHealth()){
             case 0:
@@ -82,7 +86,7 @@ class Display{
                 Console.WriteLine("[T]hrow your torch at the enemy!");
             }
         }
-        if(player.GetShieldHealth() > 0 && !player.IsBlocking){
+        if(player.GetShieldHealth() > 0 && !player.IsBlocking && !Globals.Player.Surprised){
             string extra = playerTurn ? "(and do 2 attack rolls, keeping the highest)" : "";
             Console.WriteLine($"[B]lock with your shield{extra}.");
             Console.WriteLine($"     Shield Condition:{ShieldConditionText()}");

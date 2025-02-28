@@ -15,9 +15,14 @@ static class Combat{
         //  A bit unclean/dirty, as we'll want to do something when enemy is stunned 'later'.
         //  As this is effectively an 'bonus action'
         if(!(!Globals.PlayerTurn && Enemy.CurrentEnemy.Stunned)){
+            if(Globals.Player.Stunned){
+                Globals.PlayerTurn = false;
+                Globals.Player.ProgressStunned();
+            }
             // Get player action.
             PlayerAction();
         }
+      
         // Get Ai action
         AiAction();
         // Switch turn.
@@ -109,7 +114,7 @@ static class Combat{
     /// Executes player's action based on what he choose to do.
     /// </summary>
     static void PlayerAction(){
-        Action playerAction = GetPlayerAction();
+        Action playerAction = GetPlayerAction();     
         switch(playerAction){
             case Action.attack:
                 Enemy.CurrentEnemy.Health -= Globals.Player.CalcDamage();
@@ -147,7 +152,8 @@ static class Combat{
                 }
             break;
             default:
-                Display.DoNothingMessage();
+                if(!Globals.Player.Stunned)
+                    Display.DoNothingMessage();
             break;
         }
 
