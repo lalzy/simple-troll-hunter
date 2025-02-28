@@ -13,11 +13,8 @@ class Enemy : Creature{
         _bosses =  new Stack<dynamic>();
         _bosses.Push(new Troll(randomizedBoss));
         for(int i = 0; i < floors-1 ; i++){
-            switch(rnd.Next(2)){
-                case 0:
-                    _bosses.Push(new GoblinBoss(0, randomizedBoss));
-                break;
-            }
+            // Random number = For the amount of different Goblin bosses that exist. 
+            _bosses.Push(new GoblinBoss(rnd.Next(1), randomizedBoss));
         }
     }
 

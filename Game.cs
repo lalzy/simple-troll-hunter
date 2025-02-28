@@ -80,8 +80,8 @@ class Game{
     {
         switch(Game.CurrentState){
             case State.start:
-                SelectDifficulty();
                 CreatePlayer();
+                SelectDifficulty();
                 Display.PrintWelcomeMessage();
                 CurrentState = State.explore;
                 Display.PrintCaveEntranceMessage();
@@ -142,6 +142,7 @@ class Game{
         do{
             Console.WriteLine("Do you want to go again?(Y)es, (N)o.");
             input = Console.ReadKey(true).Key;
+            Console.Clear();
         }while(input != ConsoleKey.N && input != ConsoleKey.Y);
 
         // We restart the game if yes.

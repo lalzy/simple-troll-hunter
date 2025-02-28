@@ -10,9 +10,16 @@ static class Combat{
             Globals.PlayerTurn = true;
             return Game.State.explore;
         }
+
         // Get player action.
         PlayerAction();
 
+        // Lose a turn when surprised
+        if(Globals.Player.Surprised){
+            Globals.PlayerTurn = false;
+            Globals.Player.Surprised = false;
+        }
+      
         // Get Ai action
         AiAction();
         // Switch turn.
@@ -28,8 +35,6 @@ static class Combat{
     /// </summary>
     static void AiAction(){
         if(!Globals.PlayerTurn && Enemy.CurrentEnemy != null){
-            Globals.Player.Surprised = false;
-
             int damage = Enemy.CurrentEnemy.Attack();
             if(Globals.Player.IsBlocking){
                 Globals.Player.IsBlocking = false;
@@ -111,7 +116,8 @@ static class Combat{
                 Display.StatusMessage(Globals.Player);
             break;
             default:
-                Display.DoNothingMessage();
+                if(!Globals.Player.Surprised)
+                    Display.DoNothingMessage();
             break;
         }
 

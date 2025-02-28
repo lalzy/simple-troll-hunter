@@ -17,7 +17,7 @@ static class Cave{
     /// <summary>
     /// Current floor we're on.
     /// </summary>
-    static private int _floor = 0;
+    static private int _floor;
 
     /// <summary>
     /// We procedurally generate the dungeon.
@@ -27,6 +27,8 @@ static class Cave{
     /// <param name="randomizedBoss">Wether the boss-stats should be it's static form, or a procedural one</param>
     static public void GenerateCave (int floors = 2, int rooms = 10, bool randomizedBoss = false){
         Random rnd = new Random();
+        _floor = 0; // Resets the current floor counter
+
         _cave = new Stack<RoomType>[floors];
         Enemy.PopulateBosses(floors, randomizedBoss);
 
