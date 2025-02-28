@@ -7,7 +7,7 @@ public class Inventory{
     /// </summary>
     private Dictionary<string, Item> _inventory = new Dictionary<string, Item>();
 
-    public dynamic getItem(string itemName){
+    public dynamic GetItem(string itemName){
         return _inventory[itemName.ToLower()];
     }
 
@@ -35,7 +35,9 @@ public class Inventory{
     public dynamic? CreateItem(string itemName, int? amount = 1){
         switch (itemName.ToLower()){
             case "food":
-                return new Food(amount == null ? 3 : (int) amount);
+                return new Item(amount == null ? 3 : (int) amount);
+            case "shield":
+                return new Item(amount == null ? 3 : (int) amount);
         }
         return null;
     }
