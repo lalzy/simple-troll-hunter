@@ -6,25 +6,25 @@ class Player : Creature{
     /// Not used, yet.
     /// Idea is to keep the string-name of the item(like food, torch, shield) followed by it's 'amount' or 'uses'.
     /// </summary>
-    private Dictionary<string, Item> _inventory = new Dictionary<string, Item>();
+    private Inventory inventory = new Inventory();
 
-    private int _food = 3;
     /// <summary>
     ///  How many times you can block.
     /// </summary>
     private int _shieldHealth = 3 ;
     private int _shieldHealthBase = 3;
     public bool IsBlocking = false;
+    
     /// <summary>
     /// Damage roll if blocking was a full action.
     /// </summary>
     public int BlockRoll = 0;
     public bool Surprised = false;
     public  Player(int hp, int minDamage, int maxDamage){
-        this.SetHealth(hp);
         this.MinDamage = minDamage;
         this.MaxDamage = maxDamage;
-
+        this.Health -= 10;
+        inventory.AddItem("food", 3);
     }
 
     /// <summary>
@@ -71,9 +71,10 @@ class Player : Creature{
     /// Player rest mechanic
     /// </summary>
     public void Rest(){
-        if(_food > 0){
+        var food = inventory.getItem("food");
+        if(food.GetItemCount() > 0){
             bool validRest = false;
-            if(Display.Rooms.RestMenu(_food)){
+            if(Display.Rooms.RestMenu(food.GetItemCount())){
                 validRest = restInput();
                 Console.Clear();
             }else{
@@ -83,6 +84,9 @@ class Player : Creature{
                 Display.Rooms.InvalidRestSelection();
             }else{
                 Display.Rooms.Resting();
+                food.UseItem();
+                Console.WriteLine($"You ate food, food left: {food.GetItemCount()}");
+                Console.ReadKey();
             }
         }else{
             Display.Rooms.NoFoodText();
@@ -151,13 +155,7 @@ class Player : Creature{
         return _shieldHealth;
     }
     
-    /// <summary>
-    /// Not used yet.
-    /// </summary>
-    /// <param name="item"></param>
-    /// <returns></returns>
-    // public int GetitemCount(string item){
-    //     return (from invItem in _inventory where invItem.Key.ToLower() == item.ToLower() select invItem.Value).FirstOrDefault();
-    // }
+
+
 
 }
