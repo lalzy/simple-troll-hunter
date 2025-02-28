@@ -6,7 +6,7 @@ class Player : Creature{
     /// Not used, yet.
     /// Idea is to keep the string-name of the item(like food, torch, shield) followed by it's 'amount' or 'uses'.
     /// </summary>
-    private Inventory inventory = new Inventory();
+    public Inventory Inventory = new Inventory();
 
     public bool IsBlocking = false;
     
@@ -19,8 +19,9 @@ class Player : Creature{
         this.MinDamage = minDamage;
         this.MaxDamage = maxDamage;
         this.SetHealth(hp);
-        inventory.AddItem("food");
-        inventory.AddItem("shield");
+        Inventory.AddItem("food");
+        Inventory.AddItem("shield");
+        Inventory.AddItem("tools");
     }
 
     /// <summary>
@@ -28,15 +29,17 @@ class Player : Creature{
     /// </summary>
     /// <returns>The max-health of the shield</returns>
     public int GetShieldHealthBase(){
-        return inventory.GetItem("shield").MaxAmount;
+        return Inventory.GetItem("shield").MaxAmount;
     }
 
     /// <summary>
     /// Repairs the shield if it's damaged.
     /// </summary>
     private void RepairShield(){
-        if(inventory.GetItem("shield").Amount < inventory.GetItem("shield").MaxAmount){
-            inventory.GetItem("shield").Amount++;
+        if(Inventory.GetItem("shield").Amount < Inventory.GetItem("shield").MaxAmount
+        && Inventory.GetItem("tools").Amount > 0){
+            Inventory.GetItem("tools").Amount--;
+            Inventory.GetItem("shield").Amount++;
         }
 
     }
@@ -45,7 +48,7 @@ class Player : Creature{
     /// Handles the player-input to choose what to do.
     /// </summary>
     /// <returns>Returns true if we did a valid rest, otherwise returns false (for text feedback to player only)</returns>
-    private bool restInput(){
+    private void RestInput(){
         string? input = Console.ReadLine();
         if (input == null) Environment.Exit(-1);
         else if (input == "") input = " ";
@@ -54,13 +57,18 @@ class Player : Creature{
         switch(char.ToLower(input[0])){
             case 'h':
                 this.Heal((int) Math.Round(this.BaseHealth * .20));
-                return true;
+                Display.Rooms.Resting();
+                Inventory.GetItem("food").UseItem();
+                Console.WriteLine($"You ate food, food left: {Inventory.GetItem("food").Amount}");
+                return;
             case 'r':
             case 'f':
+                Display.Rooms.FixShield();
                 RepairShield();
-                return true;
+                return;
             default:
-                return false;
+                Display.Rooms.InvalidRestSelection();
+                return;
         }
     }
 
@@ -68,21 +76,9 @@ class Player : Creature{
     /// Player rest mechanic
     /// </summary>
     public void Rest(){
-        if(inventory.GetItem("food").Amount > 0){
-            bool validRest = false;
-            if(Display.Rooms.RestMenu(inventory.GetItem("food").Amount)){
-                validRest = restInput();
-                Console.Clear();
-            }else{
-                return;
-            }
-            if(!validRest){
-                Display.Rooms.InvalidRestSelection();
-            }else{
-                Display.Rooms.Resting();
-                inventory.GetItem("food").UseItem();
-                Console.WriteLine($"You ate food, food left: {inventory.GetItem("food").Amount}");
-                Console.ReadKey();
+        if(Inventory.GetItem("food").Amount > 0){
+            if(Display.Rooms.RestMenu(Inventory.GetItem("food").Amount)){
+                RestInput();
             }
         }else{
             Display.Rooms.NoFoodText();
@@ -95,8 +91,8 @@ class Player : Creature{
     /// </summary>
     /// <param name="health">The shield's block-count you want</param>
     public void SetShieldHealth(int health = 3){
-        inventory.GetItem("shield").Amount = health;
-        inventory.GetItem("shield").MaxAmount = health;
+        Inventory.GetItem("shield").Amount = health;
+        Inventory.GetItem("shield").MaxAmount = health;
     }
 
     /// <summary>
@@ -126,7 +122,7 @@ class Player : Creature{
     /// <returns>Wether player can block or not.</returns>
     public bool CanBlock(){
         Display.ShieldBlockMessage();
-        return inventory.GetItem("shield").Amount > 0;
+        return Inventory.GetItem("shield").Amount > 0;
     }
 
     /// <summary>
@@ -135,7 +131,7 @@ class Player : Creature{
     /// <param name="enemyDamage">How much damage the enemy deals</param>
     public void Block(int enemyDamage){
         Display.BlockedEnemyMessage();
-        inventory.GetItem("shield").Amount -= (int) Math.Ceiling(enemyDamage / 10.0); 
+        Inventory.GetItem("shield").Amount -= (int) Math.Ceiling(enemyDamage / 10.0); 
     }
 
     /// <summary>
@@ -143,7 +139,7 @@ class Player : Creature{
     /// </summary>
     /// <returns>Current health of the shield</returns>
     public int GetShieldHealth(){
-        return inventory.GetItem("shield").Amount;
+        return Inventory.GetItem("shield").Amount;
     }
     
 

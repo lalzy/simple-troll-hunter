@@ -38,6 +38,8 @@ public class Inventory{
                 return new Item(amount == null ? 3 : (int) amount);
             case "shield":
                 return new Item(amount == null ? 3 : (int) amount);
+            case "tools":
+                return new Item(amount == null ? 1 : (int) amount, 2);
         }
         return null;
     }

@@ -188,13 +188,16 @@ class Display{
 
         public static bool RestMenu(int food){
             bool hasSelection = false;
+            Inventory inventory = Globals.Player.Inventory;
             Console.WriteLine($"This looks like a great place to rest (Rest available: {food})");
             if(Globals.Player.Health < Globals.Player.BaseHealth){
                 hasSelection = true;
                 Console.WriteLine("[H]eal - Tend to your wounds");
-            }else if(Globals.Player.GetShieldHealth() < Globals.Player.GetShieldHealthBase()){
+            }if(Globals.Player.GetShieldHealth() < Globals.Player.GetShieldHealthBase()
+                                    && inventory.GetItem("tools").Amount > 0){
                 hasSelection = true;
                 Console.WriteLine("[F]ix your shield.");
+                Console.WriteLine($"   Tools available: {inventory.GetItem("tools").Amount}");
             }
             
             if (!hasSelection){
@@ -203,6 +206,10 @@ class Display{
             }else{
                 return true;
             }
+        }
+
+        public static void FixShield(){
+            Console.WriteLine("You fixed up your shield.");
         }
 
         public static void InvalidRestSelection(){

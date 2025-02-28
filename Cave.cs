@@ -38,13 +38,13 @@ static class Cave{
                 // We use a switch due to us wanting to define different rooms of different types later.
                 switch(rnd.Next(RoomTypeCount)){ // Reflect room types.
                     case 0:
+                        _cave[floor].Push(RoomType.rest);
+                    break;
                     case 1:
                     case 2:
                     case 3:
                     case 4:
                     case 5:
-                        _cave[floor].Push(RoomType.rest);
-                    break;
                     case 6:
                         _cave[floor].Push(RoomType.empty);
                     break;

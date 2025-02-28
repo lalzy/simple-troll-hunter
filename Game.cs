@@ -70,7 +70,7 @@ class Game{
     /// <summary>
     /// How many rooms we've gone through (due to us lacking unique text for empty rooms)
     /// </summary>
-    static int rooms = 1;
+    static int roomsGoneThrough;
 
     /// <summary>
     /// The various Game-states 
@@ -85,6 +85,7 @@ class Game{
                 Display.PrintWelcomeMessage();
                 CurrentState = State.explore;
                 Display.PrintCaveEntranceMessage();
+                roomsGoneThrough = 1;
 
                 while(true){
                     string? input = Console.ReadLine();
@@ -108,7 +109,7 @@ class Game{
                 Display.LoseMessage();
                 return false;
             case State.explore:
-                CurrentState = Cave.HandleRoomExploration(rooms++);
+                CurrentState = Cave.HandleRoomExploration(roomsGoneThrough++);
                 break;
             case State.combat:
                 CurrentState = Combat.CombatTurn(CurrentState);
