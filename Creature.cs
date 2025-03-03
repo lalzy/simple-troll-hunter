@@ -8,6 +8,8 @@ class Creature {
     public int BaseHealth;
     public int MinDamage;
     public int MaxDamage;
+    public int rangedMin;
+    public int rangedMax;
     public bool Stunned;
     public int StunDuration;
     public Display.StunCause StunCause;

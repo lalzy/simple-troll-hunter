@@ -132,7 +132,7 @@ static class Combat{
             break;
             case Action.shootArrow:
                 if(Enemy.CurrentEnemy != null){
-                    if(FirstTurn || Enemy.CurrentEnemy.Stunned){
+                    if((FirstTurn || Globals.Player.Class == Player.Classes.archer) || Enemy.CurrentEnemy.Stunned){
                         if(Globals.Player.Inventory.UseItem("arrows")){
                             Enemy.CurrentEnemy.Stun();
                             Enemy.CurrentEnemy.StunCause = Display.StunCause.arrow;

@@ -30,12 +30,12 @@ class Game{
                 break;
             case 'i':
                 Cave.GenerateCave(2, 10);
-                Globals.Player.SetHealth(Globals.Player.Health - 20);
+                Globals.Player.SetHealth((int) Math.Round(Globals.Player.Health / 1.25));
                 Globals.SurprisedChance = 50;
                 break;
             default:
                 Cave.GenerateCave(5, 10, true);
-                Globals.Player.SetHealth(Globals.Player.Health - 20); 
+                Globals.Player.SetHealth((int) Math.Round((Globals.Player.Health / 1.25))); 
                 Globals.Player.SetShieldHealth(2);
                 Globals.SurprisedChance = 100;
                 invalidSelection = true;
@@ -120,7 +120,7 @@ class Game{
     /// Initializes the player.
     /// </summary>
     static void CreatePlayer(){
-        Globals.Player = new Player(50, 5, 10);
+        CharacterCreation.StartCharacterCreation();
     }
 
     /// <summary>

@@ -2,22 +2,24 @@ using System.Collections;
 using System.Security.Cryptography;
 
 class Player : Creature{
+    public enum Classes{
+        custom = 0,
+        knight = 1,
+        archer = 2,
+    }
+    public Classes Class;
     public Inventory Inventory = new Inventory();
-
     public bool IsBlocking = false;
     
     /// <summary>
     /// Damage roll if blocking was a full action.
     /// </summary>
     public int BlockRoll = 0;
-    public  Player(int hp, int minDamage, int maxDamage){
+    public  Player(int hp, int minDamage, int maxDamage, int rangedMin = 1, int rangedmax = 5){
         this.MinDamage = minDamage;
         this.MaxDamage = maxDamage;
+        Class = Classes.custom;
         this.SetHealth(hp);
-        Inventory.AddItem("food", 3);
-        Inventory.AddItem("shield", 3);
-        Inventory.AddItem("tools", 1);
-        Inventory.AddItem("torch", 1);
     }
 
     /// <summary>

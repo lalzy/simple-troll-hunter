@@ -43,7 +43,12 @@ public class Inventory{
     /// <param name="amount">The amount (Will not exceed max for the created item)</param>
     /// <returns>Item Created</returns>
     public void CreateItem(string itemName, int amount = 1, int maxAmount = 2){
-        _inventory.Add(itemName.ToLower(), new Item(amount, maxAmount));
+        if(_inventory.ContainsKey(itemName)){
+            _inventory[itemName].Amount = amount;
+            _inventory[itemName].MaxAmount = maxAmount;
+        }else{
+            _inventory.Add(itemName.ToLower(), new Item(amount, maxAmount));
+        }
     }
 
     /// <summary>

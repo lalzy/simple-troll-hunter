@@ -6,6 +6,19 @@ class Display{
         Console.WriteLine("press any key to continue");
     }
 
+    public static void KnightDetails(){
+        Console.WriteLine("Starts with a shield, 50HP, 1 set of tools, 1 torch, and 3 pieces of food.");
+    }
+
+    public static void ArcherDetails(){
+        Console.WriteLine("Starts with 20 arrows, Higher base-damage for arrows than knight. 30HP, can shoot outside of first-turn");
+    }
+
+    public static void CharacterSelectionMenu(){
+        Console.WriteLine("1 - Knight");
+        Console.WriteLine("2 - Archer");
+    }
+
     public static void SurprisedMessage (){
         Console.WriteLine("You were surprised, and failed to act!");
     }
@@ -51,7 +64,11 @@ class Display{
     }
 
     static public void ShootArrow(){
-        Console.WriteLine("You shot an arrow at the enemy!");
+        if(Globals.Player.Class == Player.Classes.archer){
+            Console.WriteLine("You dodge back as you shoot an arrow. You're too quick for the enemy!");
+        }else{
+            Console.WriteLine("You shot an arrow at the enemy!");
+        }
     }
     static public void NoArrows(){
         Console.WriteLine("You notice you have no arrows...");
@@ -99,7 +116,7 @@ class Display{
             if(player.Inventory.GetItem("torch").Amount > 0){
                 Console.WriteLine("[T]hrow your torch at the enemy!");
             }
-            if(Combat.FirstTurn && player.Inventory.GetItem("arrows").Amount > 0){
+            if((Combat.FirstTurn || player.Class == Player.Classes.archer) && player.Inventory.GetItem("arrows").Amount > 0){
                 Console.WriteLine("[S]hoot an arrow");
                 Console.WriteLine($"     Arrows: {player.Inventory.GetItem("arrows").Amount}");
             }
