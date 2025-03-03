@@ -10,10 +10,6 @@ class Display{
         Console.WriteLine("You were surprised, and failed to act!");
     }
 
-    public static void SurprisedMessage (){
-        Console.WriteLine("You were surprised, and failed to act!");
-    }
-
     public static string ShieldConditionText(){
         switch (Globals.Player.GetShieldHealth()){
             case 0:
@@ -217,6 +213,15 @@ class Display{
             Console.WriteLine("Room was empty");
         }
 
+        public static bool HasNoItemSelection(bool[] validSelections){
+            foreach (bool selection in validSelections)
+            {
+                if(selection){
+                    return false;
+                }
+            }
+            return true;
+        }
 
         /// <summary>
         /// Armory handling
@@ -230,15 +235,15 @@ class Display{
             Item shield = inventory.GetItem("shield");
             Item torch = inventory.GetItem("torch");
             Item arrows = inventory.GetItem("arrows");
-            bool[] validSelections = new bool[]{true, false, false};
+            bool[] validSelections = new bool[]{false, false, false};
             
             Console.WriteLine("It's an armory!");
             if(shield.Amount < shield.MaxAmount){
+                validSelections[(int) ValidItemChoices.torch] = true;
                 Console.Write($"[1] You see a shield against the wall.");
                 if(shield.Amount < newShieldCon){
                     Console.Write("It's in a better condition than yours");
                 }else{
-                    validSelections[(int) ValidItemChoices.shield] = false;
                     Console.Write("But your shield is in a better condition.");
                 }
             }
@@ -251,21 +256,13 @@ class Display{
                 Console.WriteLine($"[3] You see some arrows on a table.");
             }
 
-            bool noSelection = true;
-            foreach (bool selection in validSelections)
-            {
-                if(selection){
-                    noSelection = false;
-                    break;
-                }
-            }
-
-            if(noSelection){
+            if(HasNoItemSelection(validSelections)){
                 Console.WriteLine("But there's nothing you can use");
             }
 
             return validSelections;
         }
+
 
         public static void Resting(){
             Console.WriteLine("You rested");

@@ -84,19 +84,22 @@ static class Cave{
     /// </summary>
     /// <param name="currentRoom">The current room we're on</param>
     public static void ExploreRoom(){
+        bool skipKeyRead = false;
         switch(_currentRoom){
             case RoomType.empty:
                 Display.Rooms.Empty();
             break;
             case RoomType.armory:
-                Rooms.Armory();
+                skipKeyRead = Rooms.Armory();
             break;
             case RoomType.rest:
-                Globals.Player.Rest();
+                skipKeyRead = Globals.Player.Rest();
             break;
         }
-        Display.PressAnyKey();
-        Console.ReadKey();
+        if(!skipKeyRead){
+            Display.PressAnyKey();
+            Console.ReadKey();
+        }
         Console.Clear();
     }
 

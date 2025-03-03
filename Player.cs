@@ -22,7 +22,7 @@ class Player : Creature{
         Inventory.AddItem("shield", 3);
         Inventory.AddItem("tools", 1);
         Inventory.AddItem("torch", 1);
-        Inventory.AddItem("arrows", 3);
+        // Inventory.AddItem("arrows", 3);
     }
 
     /// <summary>
@@ -49,7 +49,7 @@ class Player : Creature{
     /// Handles the player-input to choose what to do.
     /// </summary>
     /// <returns>Returns true if we did a valid rest, otherwise returns false (for text feedback to player only)</returns>
-    private void RestInput(){
+    private bool RestInput(){
         string? input = Console.ReadLine();
         if (input == null) Environment.Exit(-1);
         else if (input == "") input = " ";
@@ -61,30 +61,31 @@ class Player : Creature{
                 Display.Rooms.Resting();
                 Inventory.GetItem("food").UseItem();
                 Console.WriteLine($"You ate food, food left: {Inventory.GetItem("food").Amount}");
-                return;
+                return true;
             case 'r':
             case 'f':
                 Display.Rooms.FixShield();
                 RepairShield();
-                return;
+                return true;
             default:
                 Display.Rooms.InvalidRestSelection();
-                return;
+                return true;
         }
     }
 
     /// <summary>
     /// Player rest mechanic
     /// </summary>
-    public void Rest(){
+    public bool Rest(){
+        bool rested = false;
         if(Inventory.GetItem("food").Amount > 0){
             if(Display.Rooms.RestMenu(Inventory.GetItem("food").Amount)){
-                RestInput();
+                rested = RestInput();
             }
         }else{
             Display.Rooms.NoFoodText();
         }
-
+        return rested;
     }
 
     /// <summary>

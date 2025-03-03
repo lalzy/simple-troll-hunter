@@ -100,7 +100,11 @@ static class Combat{
             }else if(input[0] == 't'){
                 return Action.torch;
             }else if (input[0] == 's'){
-                return Action.shootArrow;
+                if(FirstTurn){
+                    return Action.shootArrow;
+                }else{
+                    return Action.nothing;
+                }
             }
         }
         // player can always do these actions.
