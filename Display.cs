@@ -86,7 +86,7 @@ class Display{
                 Console.WriteLine("[T]hrow your torch at the enemy!");
             }
         }
-        if(player.GetShieldHealth() > 0 && !player.IsBlocking && !Globals.Player.Surprised){
+        if(player.GetShieldHealth() > 0 && !player.IsBlocking && !Globals.Player.Stunned){
             string extra = playerTurn ? "(and do 2 attack rolls, keeping the highest)" : "";
             Console.WriteLine($"[B]lock with your shield{extra}.");
             Console.WriteLine($"     Shield Condition:{ShieldConditionText()}");
