@@ -24,9 +24,14 @@ class Creature {
     /// </summary>
     /// <param name="turns">How many turns.</param>
     public void Stun(int turns = 1){
-        // We subtract by 1 turn, due to how we check stunning. it'll always be N+1 turns (So we now make it (N-1)+1 turns).
-        this.StunDuration = turns - 1;
-        Stunned = true;
+        if(this.Stunned){
+            this.StunDuration += (turns - 1);
+        }else{
+            // We subtract by 1 turn, due to how we check stunning. 
+            // it'll always be N+1 turns (So we now make it (N-1)+1 turns).
+            this.StunDuration = turns - 1;
+            Stunned = true;
+        }
     }
     /// <summary>
     /// Get the damage the creature will deal.

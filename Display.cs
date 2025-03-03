@@ -50,6 +50,16 @@ class Display{
         Console.Clear();
     }
 
+    static public void ShootArrow(){
+        Console.WriteLine("You shot an arrow at the enemy!");
+    }
+    static public void NoArrows(){
+        Console.WriteLine("You notice you have no arrows...");
+    }
+    static public void CanOnlyDoFirstCombatTurn(){
+        Console.WriteLine("The enemy counters you (It's too close)!");
+    }
+
     static public void NewFloorText(){
         Console.WriteLine("You enter a new floor");
     }
@@ -68,11 +78,15 @@ class Display{
         }
     }
 
-    static public void PlayerMenu(bool playerTurn, Enemy currentEnemy, Player player){
+    static public void PlayerHUD(bool playerTurn, Enemy enemy, Player player){
         if(playerTurn){
-            Console.WriteLine($"You're facing a, <{currentEnemy.Name}>");
+            Console.WriteLine($"You're facing a, <{enemy.Name}>");
         }
         Console.WriteLine($"HP: {player.Health}");
+    }
+
+    static public void PlayerMenu(bool playerTurn, Enemy currentEnemy, Player player){
+        PlayerHUD(playerTurn, currentEnemy, player);
         if(player.Stunned && playerTurn){
             player.ProgressStunned();
             playerTurn = false;
@@ -85,6 +99,10 @@ class Display{
             if(player.Inventory.GetItem("torch").Amount > 0){
                 Console.WriteLine("[T]hrow your torch at the enemy!");
             }
+        }
+        if(Combat.FirstTurn && player.Inventory.GetItem("arrows").Amount > 0){
+            Console.WriteLine("[S]hoot an arrow");
+            Console.WriteLine($"     Arrows: {player.Inventory.GetItem("arrows").Amount}");
         }
         if(player.GetShieldHealth() > 0 && !player.IsBlocking && !Globals.Player.Stunned){
             string extra = playerTurn ? "(and do 2 attack rolls, keeping the highest)" : "";
@@ -151,11 +169,6 @@ class Display{
 
     static public void DoNothingMessage(){
         Console.WriteLine("You do nothing");
-    }
-
-    static public void StatusMessage(Player player){
-        Console.WriteLine($"You currently have: {player.Health}hp left");
-        Console.WriteLine($"Your shield's condition is: {ShieldConditionText()}");
     }
 
     static public void PrintCaveEntranceMessage(){

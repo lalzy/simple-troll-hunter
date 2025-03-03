@@ -100,11 +100,7 @@ static class Combat{
             }else if(input[0] == 't'){
                 return Action.torch;
             }else if (input[0] == 's'){
-                if(FirstTurn){
-                    return Action.shootArrow;
-                }else{
-                    return Action.nothing;
-                }
+                return Action.shootArrow;
             }
         }
         // player can always do these actions.
@@ -132,19 +128,24 @@ static class Combat{
                 }
             break;
             case Action.examine: 
-
+                Display.PrintState(Enemy.CurrentEnemy);
             break;
             case Action.shootArrow:
                 if(Enemy.CurrentEnemy != null){
-                    if(Globals.Player.Inventory.UseItem("arrows")){
-                        Enemy.CurrentEnemy.Stun();
-                        Enemy.CurrentEnemy.StunCause = Display.StunCause.arrow;
-                        Console.WriteLine("You shot an arrow at the enemy!");
+                    if(FirstTurn || Enemy.CurrentEnemy.Stunned){
+                        if(Globals.Player.Inventory.UseItem("arrows")){
+                            Enemy.CurrentEnemy.Stun();
+                            Enemy.CurrentEnemy.StunCause = Display.StunCause.arrow;
+                            Enemy.CurrentEnemy.Health -= new Random().Next(1,10);
+                            Display.ShootArrow();
+                        }else{
+                            Display.NoArrows();
+                        }
+                    }else{
+                        Display.CanOnlyDoFirstCombatTurn();
                     }
+                    
                 }
-            break;
-            case Action.status: 
-                Display.StatusMessage(Globals.Player);
             break;
             case Action.torch:
                 if(Enemy.CurrentEnemy != null){
@@ -159,10 +160,6 @@ static class Combat{
                 if(!Globals.Player.Stunned)
                     Display.DoNothingMessage();
             break;
-        }
-
-        if(playerAction == Action.examine){
-            Display.PrintState(Enemy.CurrentEnemy);
         }
     }
 

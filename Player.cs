@@ -22,7 +22,6 @@ class Player : Creature{
         Inventory.AddItem("shield", 3);
         Inventory.AddItem("tools", 1);
         Inventory.AddItem("torch", 1);
-        // Inventory.AddItem("arrows", 3);
     }
 
     /// <summary>
