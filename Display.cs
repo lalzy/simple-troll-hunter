@@ -99,10 +99,10 @@ class Display{
             if(player.Inventory.GetItem("torch").Amount > 0){
                 Console.WriteLine("[T]hrow your torch at the enemy!");
             }
-        }
-        if(Combat.FirstTurn && player.Inventory.GetItem("arrows").Amount > 0){
-            Console.WriteLine("[S]hoot an arrow");
-            Console.WriteLine($"     Arrows: {player.Inventory.GetItem("arrows").Amount}");
+            if(Combat.FirstTurn && player.Inventory.GetItem("arrows").Amount > 0){
+                Console.WriteLine("[S]hoot an arrow");
+                Console.WriteLine($"     Arrows: {player.Inventory.GetItem("arrows").Amount}");
+            }
         }
         if(player.GetShieldHealth() > 0 && !player.IsBlocking && !Globals.Player.Stunned){
             string extra = playerTurn ? "(and do 2 attack rolls, keeping the highest)" : "";
@@ -223,7 +223,23 @@ class Display{
     }
     public static class Rooms{
         public static void Empty(){
-            Console.WriteLine("Room was empty");
+            switch(new Random().Next(5)){
+                case 0:
+                    Console.WriteLine("Just an empty room...");
+                return;
+                case 1:
+                    Console.WriteLine("A goblin bedchamber. Thankfully, it's empty.");
+                return;
+                case 2:
+                    Console.WriteLine("Looks to be a bathroom.");
+                return;
+                case 3:
+                    Console.WriteLine("Cobwebs, cobwebs everywhere.");
+                return;
+                case 4:
+                    Console.WriteLine("An old storage room, absolutely nothing of value");
+                return;
+            }
         }
 
         public static bool HasNoItemSelection(bool[] validSelections){

@@ -41,7 +41,6 @@ class Game{
                 invalidSelection = true;
             break;
         }
-
         if(invalidSelection){
             Display.InvalidDifficultySelectionMessage();
         }

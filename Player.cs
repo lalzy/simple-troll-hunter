@@ -2,10 +2,6 @@ using System.Collections;
 using System.Security.Cryptography;
 
 class Player : Creature{
-    /// <summary>
-    /// Not used, yet.
-    /// Idea is to keep the string-name of the item(like food, torch, shield) followed by it's 'amount' or 'uses'.
-    /// </summary>
     public Inventory Inventory = new Inventory();
 
     public bool IsBlocking = false;
@@ -104,6 +100,7 @@ class Player : Creature{
         if(Inventory.GetItem("torch").Amount == 0){
             if (new Random().Next(1, 100) < Globals.SurprisedChance){
                 this.Stun(); // stuns for 1 turn.
+                Display.SurprisedMessage();
             }
         }
     }
