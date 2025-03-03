@@ -10,6 +10,10 @@ class Display{
         Console.WriteLine("You were surprised, and failed to act!");
     }
 
+    public static void SurprisedMessage (){
+        Console.WriteLine("You were surprised, and failed to act!");
+    }
+
     public static string ShieldConditionText(){
         switch (Globals.Player.GetShieldHealth()){
             case 0:
