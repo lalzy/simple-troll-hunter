@@ -21,6 +21,24 @@ class Display{
         }
     }
 
+    static public void ThrewTorch(){
+        Console.WriteLine("You threw the torch at the enemy, setting it aflame!");
+    }
+
+    public enum StunCause{
+        torch = 0,
+        arrow = 1,
+    }
+    static public void EnemyIsStunned(Enemy enemy){
+        switch(enemy.StunCause){
+            case StunCause.torch:
+                Console.WriteLine("Enemy is still figthing the flames!");
+            return;
+            case StunCause.arrow:
+            return;
+        }
+    }
+
     static public void CreatureDiesMessage(Enemy enemy){
         Console.WriteLine($"You killed the {enemy.Name}!");
         Console.WriteLine("press {any} key to continue.");
@@ -51,7 +69,8 @@ class Display{
             Console.WriteLine($"You're facing a, <{currentEnemy.Name}>");
         }
         Console.WriteLine($"HP: {player.Health}");
-        if(player.Surprised && playerTurn){
+        if(player.Stunned && playerTurn){
+            player.ProgressStunned();
             playerTurn = false;
             Console.WriteLine("You were surprised! Lost a turn");
         }
@@ -59,6 +78,9 @@ class Display{
         if(playerTurn){
             Console.WriteLine("[A]ttack with your sword!");
             Console.WriteLine("[E]xamine the enemy, see it's condition.");
+            if(player.Inventory.GetItem("torch").Amount > 0){
+                Console.WriteLine("[T]hrow your torch at the enemy!");
+            }
         }
         if(player.GetShieldHealth() > 0 && !player.IsBlocking){
             string extra = playerTurn ? "(and do 2 attack rolls, keeping the highest)" : "";
@@ -177,9 +199,64 @@ class Display{
             Console.WriteLine();
     }
 
+    public enum ValidItemChoices{
+        shield = 0,
+        torch = 1,
+        arrows = 2,
+    }
     public static class Rooms{
         public static void Empty(){
             Console.WriteLine("Room was empty");
+        }
+
+
+        /// <summary>
+        /// Armory handling
+        /// </summary>
+        /// <param name="newShieldCon"></param>
+        /// <returns>Array of booleans of if the item is valid or not:
+        // [shield, torch, arrows]
+        // </returns>
+        public static bool[] DiscoverArmory(int newShieldCon){
+            Inventory inventory = Globals.Player.Inventory;
+            Item shield = inventory.GetItem("shield");
+            Item torch = inventory.GetItem("torch");
+            Item arrows = inventory.GetItem("arrows");
+            bool[] validSelections = new bool[]{true, false, false};
+            
+            Console.WriteLine("It's an armory!");
+            if(shield.Amount < shield.MaxAmount){
+                Console.Write($"[1] You see a shield against the wall.");
+                if(shield.Amount < newShieldCon){
+                    Console.Write("It's in a better condition than yours");
+                }else{
+                    validSelections[(int) ValidItemChoices.shield] = false;
+                    Console.Write("But your shield is in a better condition.");
+                }
+            }
+            if(torch.Amount == 0){
+                validSelections[(int) ValidItemChoices.torch] = true;
+                Console.WriteLine($"[2] You see an unlit torch. pick it up?");
+            }
+            if(arrows.Amount < arrows.MaxAmount){
+                validSelections[(int) ValidItemChoices.arrows] = true;
+                Console.WriteLine($"[3] You see some arrows on a table.");
+            }
+
+            bool noSelection = true;
+            foreach (bool selection in validSelections)
+            {
+                if(selection){
+                    noSelection = false;
+                    break;
+                }
+            }
+
+            if(noSelection){
+                Console.WriteLine("But there's nothing you can use");
+            }
+
+            return validSelections;
         }
 
         public static void Resting(){
@@ -206,6 +283,14 @@ class Display{
             }else{
                 return true;
             }
+        }
+
+        public static void PickedUpArrows(int arrowCount){
+            Console.WriteLine($"You picked up {arrowCount} arrow{(arrowCount > 1 ? "s" : "")}");
+        }
+
+        public static void ArmoryDidntChoose(){
+            Console.WriteLine("You didn't pick up anything.");
         }
 
         public static void FixShield(){

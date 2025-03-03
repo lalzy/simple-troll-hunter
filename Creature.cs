@@ -8,7 +8,26 @@ class Creature {
     public int BaseHealth;
     public int MinDamage;
     public int MaxDamage;
+    public bool Stunned;
+    public int StunDuration;
+    public Display.StunCause StunCause;
 
+    public void ProgressStunned(){
+        if(StunDuration > 0){
+            StunDuration--;
+        }else if (Stunned){
+            Stunned = false;
+        }
+    }
+    /// <summary>
+    /// Stuns the enemy for amount of turns specified.
+    /// </summary>
+    /// <param name="turns">How many turns.</param>
+    public void Stun(int turns = 1){
+        // We subtract by 1 turn, due to how we check stunning. it'll always be N+1 turns (So we now make it (N-1)+1 turns).
+        this.StunDuration = turns - 1;
+        Stunned = true;
+    }
     /// <summary>
     /// Get the damage the creature will deal.
     /// </summary>

@@ -5,7 +5,17 @@ public class Inventory{
     /// Not used, yet.
     /// Idea is to keep the string-name of the item(like food, torch, shield) followed by it's 'amount' or 'uses'.
     /// </summary>
+    public Inventory(){
+        CreateItems();
+    }
     private Dictionary<string, Item> _inventory = new Dictionary<string, Item>();
+    public void CreateItems(){
+        CreateItem("food", 0, 3);
+        CreateItem("shield", 0, 3);
+        CreateItem("tools", 0, 3);
+        CreateItem("torch", 0, 1);
+        CreateItem("arrows",0, 3);
+    }
 
     public dynamic GetItem(string itemName){
         return _inventory[itemName.ToLower()];
@@ -32,16 +42,8 @@ public class Inventory{
     /// <param name="itemName">Item name</param>
     /// <param name="amount">The amount (Will not exceed max for the created item)</param>
     /// <returns>Item Created</returns>
-    public dynamic? CreateItem(string itemName, int? amount = 1){
-        switch (itemName.ToLower()){
-            case "food":
-                return new Item(amount == null ? 3 : (int) amount);
-            case "shield":
-                return new Item(amount == null ? 3 : (int) amount);
-            case "tools":
-                return new Item(amount == null ? 1 : (int) amount, 2);
-        }
-        return null;
+    public void CreateItem(string itemName, int amount = 1, int maxAmount = 2){
+        _inventory.Add(itemName.ToLower(), new Item(amount, maxAmount));
     }
 
     /// <summary>
@@ -49,14 +51,11 @@ public class Inventory{
     /// </summary>
     /// <param name="itemName">name of the item</param>
     /// <param name="amount">How many items to be added (will never exceed max).</param>
-    public void AddItem(string itemName,int? amount = null){
+    public void AddItem(string itemName,int amount = 1){
         try{
             _inventory[itemName].AddItem(amount);
         }catch (KeyNotFoundException) {
-            var item = CreateItem(itemName, amount);
-            if(item == null) return;
-
-            _inventory.Add(itemName, CreateItem(itemName, amount));
+            CreateItem(itemName, amount, 3);
         }
     }
 }

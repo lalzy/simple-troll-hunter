@@ -14,14 +14,15 @@ class Player : Creature{
     /// Damage roll if blocking was a full action.
     /// </summary>
     public int BlockRoll = 0;
-    public bool Surprised = false;
     public  Player(int hp, int minDamage, int maxDamage){
         this.MinDamage = minDamage;
         this.MaxDamage = maxDamage;
         this.SetHealth(hp);
-        Inventory.AddItem("food");
-        Inventory.AddItem("shield");
-        Inventory.AddItem("tools");
+        Inventory.AddItem("food", 3);
+        Inventory.AddItem("shield", 3);
+        Inventory.AddItem("tools", 1);
+        Inventory.AddItem("torch", 1);
+        Inventory.AddItem("arrows", 3);
     }
 
     /// <summary>
@@ -99,7 +100,12 @@ class Player : Creature{
     /// Return if player was surpised or not. Chance is aquired from the Globals Surprised chance, which gets defined in Game.SelectDifficulty()
     /// </summary>
     public void CheckSurprised(){
-        Surprised = (new Random().Next(1, 100) < Globals.SurprisedChance);
+        // Torch makes you immune to surprise.
+        if(Inventory.GetItem("torch").Amount == 0){
+            if (new Random().Next(1, 100) < Globals.SurprisedChance){
+                this.Stun(); // stuns for 1 turn.
+            }
+        }
     }
 
     /// <summary>

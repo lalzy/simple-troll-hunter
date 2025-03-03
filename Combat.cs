@@ -1,4 +1,5 @@
 static class Combat{
+    public static bool FirstTurn;
     /// <summary>
     /// Starts a combat-turn.
     /// </summary>
@@ -10,9 +11,13 @@ static class Combat{
             Globals.PlayerTurn = true;
             return Game.State.explore;
         }
-        // Get player action.
-        PlayerAction();
-
+        // Don't do the enemy-action choic (block), while enemy is stunned.
+        //  A bit unclean/dirty, as we'll want to do something when enemy is stunned 'later'.
+        //  As this is effectively an 'bonus action'
+        if(!(!Globals.PlayerTurn && Enemy.CurrentEnemy.Stunned)){
+            // Get player action.
+            PlayerAction();
+        }
         // Get Ai action
         AiAction();
         // Switch turn.
@@ -20,6 +25,8 @@ static class Combat{
         if(Globals.Player.Health <= 0){
             CurrentState = Game.State.lose;
         }
+
+        FirstTurn = false; // TO be used with arrows. Lets you do an +1 attack action.
         return CurrentState;
     }
 
@@ -28,15 +35,19 @@ static class Combat{
     /// </summary>
     static void AiAction(){
         if(!Globals.PlayerTurn && Enemy.CurrentEnemy != null){
-            Globals.Player.Surprised = false;
-
-            int damage = Enemy.CurrentEnemy.Attack();
-            if(Globals.Player.IsBlocking){
-                Globals.Player.IsBlocking = false;
-                Globals.Player.Block(damage);
+            Globals.Player.Stunned = false;
+            if(Enemy.CurrentEnemy.Stunned){
+                Enemy.CurrentEnemy.ProgressStunned();
+                Display.EnemyIsStunned(Enemy.CurrentEnemy);
             }else{
-                Display.TakeDamagePrint(damage);
-                Globals.Player.Health -= damage;
+                int damage = Enemy.CurrentEnemy.Attack();
+                if(Globals.Player.IsBlocking){
+                    Globals.Player.IsBlocking = false;
+                    Globals.Player.Block(damage);
+                }else{
+                    Display.TakeDamagePrint(damage);
+                    Globals.Player.Health -= damage;
+                }
             }
         }
     }
@@ -50,6 +61,8 @@ static class Combat{
         block = 'b',
         status = 'c',
         examine = 'e',
+        shootArrow = 's',
+        torch = 't',
     }
 
     /// <summary>
@@ -79,10 +92,14 @@ static class Combat{
                 return Action.attack;
             }else if(input[0] == 'e'){
                 return Action.examine;
+            }else if(input[0] == 't'){
+                return Action.torch;
+            }else if (input[0] == 's'){
+                return Action.shootArrow;
             }
         }
         // player can always do these actions.
-        if(input[0] == 'b' && !Globals.Player.Surprised){
+        if(input[0] == 'b' && !Globals.Player.Stunned){
             return Action.block;
         }
 
@@ -102,13 +119,32 @@ static class Combat{
                 Globals.Player.IsBlocking = Globals.Player.CanBlock();
                 // Only get the bonus if we spend entire turn blocking, and not block as reaction.
                 if(Globals.PlayerTurn){
+                    Globals.Player.BlockRoll = Globals.Player.Attack();
                 }
             break;
             case Action.examine: 
 
             break;
+            case Action.shootArrow:
+                if(Enemy.CurrentEnemy != null){
+                    if(Globals.Player.Inventory.UseItem("arrows")){
+                        Enemy.CurrentEnemy.Stun();
+                        Enemy.CurrentEnemy.StunCause = Display.StunCause.arrow;
+                        Console.WriteLine("You shot an arrow at the enemy!");
+                    }
+                }
+            break;
             case Action.status: 
                 Display.StatusMessage(Globals.Player);
+            break;
+            case Action.torch:
+                if(Enemy.CurrentEnemy != null){
+                    if(Globals.Player.Inventory.UseItem("torch")){
+                        Enemy.CurrentEnemy.StunCause = Display.StunCause.torch;
+                        Enemy.CurrentEnemy.Stun(3); // Stuns for effectively 3 turns.
+                        Display.ThrewTorch();
+                    }
+                }
             break;
             default:
                 Display.DoNothingMessage();

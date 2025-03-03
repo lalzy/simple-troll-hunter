@@ -7,6 +7,7 @@ static class Cave{
         endofCave = -1,
         empty = 0,
         rest = 1,
+        armory = 2,
         enemy = 9,
         boss = 10,
     }
@@ -38,9 +39,11 @@ static class Cave{
                 // We use a switch due to us wanting to define different rooms of different types later.
                 switch(rnd.Next(RoomTypeCount)){ // Reflect room types.
                     case 0:
-                        _cave[floor].Push(RoomType.rest);
+                        _cave[floor].Push(RoomType.armory);
                     break;
                     case 1:
+                        _cave[floor].Push(RoomType.rest);
+                    break;
                     case 2:
                     case 3:
                     case 4:
@@ -82,17 +85,17 @@ static class Cave{
         switch(_currentRoom){
             case RoomType.empty:
                 Display.Rooms.Empty();
-                Display.PressAnyKey();
-                Console.ReadKey();
-                Console.Clear();
+            break;
+            case RoomType.armory:
+                Rooms.Armory();
             break;
             case RoomType.rest:
                 Globals.Player.Rest();
-                Display.PressAnyKey();
-                Console.ReadKey();
-                Console.Clear();
             break;
         }
+        Display.PressAnyKey();
+        Console.ReadKey();
+        Console.Clear();
     }
 
     /// <summary>
@@ -105,6 +108,7 @@ static class Cave{
         Enemy.SpawnEnemy(_currentRoom);
         Console.WriteLine($"room: {rooms}");
         if (Enemy.CurrentEnemy != null){
+            Combat.FirstTurn = true;
             return Game.State.combat;
         }else if(Cave.RoomType.endofCave == _currentRoom){
             return Game.State.won;
