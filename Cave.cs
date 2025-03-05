@@ -8,6 +8,7 @@ static class Cave{
         empty = 0,
         rest = 1,
         armory = 2,
+        kitchen = 3,
         enemy = 9,
         boss = 10,
     }
@@ -47,6 +48,8 @@ static class Cave{
                         _cave[floor].Push(RoomType.rest);
                     break;
                     case 2:
+                        _cave[floor].Push(RoomType.kitchen);
+                    break;
                     case 3:
                     case 4:
                     case 5:
@@ -94,6 +97,9 @@ static class Cave{
             break;
             case RoomType.rest:
                 skipKeyRead = Globals.Player.Rest();
+            break;
+            case RoomType.kitchen:
+                skipKeyRead = Rooms.Kitchen();
             break;
         }
         if(!skipKeyRead){

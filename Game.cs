@@ -17,7 +17,7 @@ class Game{
         bool invalidSelection = false;
         switch(input.ToLower()[0]){
             case 'e':
-                Globals.SurprisedChance = 0;
+                Globals.SurprisedChance = 15;
                 Cave.GenerateCave( 1, 10);
                 break;
             case 'm':
@@ -25,11 +25,11 @@ class Game{
                 Globals.SurprisedChance = 30;
                 break;
             case 'h':
-                Cave.GenerateCave(2, 10);
+                Cave.GenerateCave(3, 10);
                 Globals.SurprisedChance = 50;
                 break;
             case 'i':
-                Cave.GenerateCave(2, 10);
+                Cave.GenerateCave(5, 10);
                 Globals.Player.SetHealth((int) Math.Round(Globals.Player.Health / 1.25));
                 Globals.SurprisedChance = 50;
                 break;
@@ -120,7 +120,7 @@ class Game{
     /// Initializes the player.
     /// </summary>
     static void CreatePlayer(){
-        CharacterCreation.StartCharacterCreation();
+        CharacterSelection.StartCharacterSelection();
     }
 
     /// <summary>

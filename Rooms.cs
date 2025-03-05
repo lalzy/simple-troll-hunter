@@ -1,4 +1,17 @@
 public class Rooms{
+    public static bool Kitchen(){
+        Item food = Globals.Player.Inventory.GetItem(Inventory.Items.food);
+
+        // Health Upgrade?
+        if(food.Amount < food.MaxAmount){
+            // DIsplay food item
+        }else{
+            // DIsplay nothing apetizing.
+        }
+
+        return false;
+    }
+
     /// <summary>
     /// 
     /// </summary>
