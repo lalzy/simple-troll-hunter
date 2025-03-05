@@ -113,12 +113,12 @@ class Display{
         if(playerTurn){
             Console.WriteLine("[A]ttack with your sword!");
             Console.WriteLine("[E]xamine the enemy, see it's condition.");
-            if(player.Inventory.GetItem("torch").Amount > 0){
+            if(player.Inventory.GetItem(Inventory.Items.torch).Amount > 0){
                 Console.WriteLine("[T]hrow your torch at the enemy!");
             }
-            if((Combat.FirstTurn || player.Class == Player.Classes.archer) && player.Inventory.GetItem("arrows").Amount > 0){
+            if((Combat.FirstTurn || player.Class == Player.Classes.archer) && player.Inventory.GetItem(Inventory.Items.arrows).Amount > 0){
                 Console.WriteLine("[S]hoot an arrow");
-                Console.WriteLine($"     Arrows: {player.Inventory.GetItem("arrows").Amount}");
+                Console.WriteLine($"     Arrows: {player.Inventory.GetItem(Inventory.Items.arrows).Amount}");
             }
         }
         if(player.GetShieldHealth() > 0 && !player.IsBlocking && !Globals.Player.Stunned){
@@ -278,19 +278,19 @@ class Display{
         // </returns>
         public static bool[] DiscoverArmory(int newShieldCon){
             Inventory inventory = Globals.Player.Inventory;
-            Item shield = inventory.GetItem("shield");
-            Item torch = inventory.GetItem("torch");
-            Item arrows = inventory.GetItem("arrows");
+            Item shield = inventory.GetItem(Inventory.Items.shield);
+            Item torch = inventory.GetItem(Inventory.Items.torch);
+            Item arrows = inventory.GetItem(Inventory.Items.arrows);
             bool[] validSelections = new bool[]{false, false, false};
             
             Console.WriteLine("It's an armory!");
             if(shield.Amount < shield.MaxAmount){
-                validSelections[(int) ValidItemChoices.torch] = true;
+                validSelections[(int) ValidItemChoices.shield] = true;
                 Console.Write($"[1] You see a shield against the wall.");
                 if(shield.Amount < newShieldCon){
-                    Console.Write("It's in a better condition than yours");
+                    Console.WriteLine("It's in a better condition than yours");
                 }else{
-                    Console.Write("But your shield is in a better condition.");
+                    Console.WriteLine("But your shield is in a better condition.");
                 }
             }
             if(torch.Amount == 0){
@@ -301,7 +301,7 @@ class Display{
                 validSelections[(int) ValidItemChoices.arrows] = true;
                 Console.WriteLine($"[3] You see some arrows on a table.");
             }
-
+            
             if(HasNoItemSelection(validSelections)){
                 Console.WriteLine("But there's nothing you can use");
             }
@@ -322,10 +322,10 @@ class Display{
                 hasSelection = true;
                 Console.WriteLine("[H]eal - Tend to your wounds");
             }if(Globals.Player.GetShieldHealth() < Globals.Player.GetShieldHealthBase()
-                                    && inventory.GetItem("tools").Amount > 0){
+                                    && inventory.GetItem(Inventory.Items.tools).Amount > 0){
                 hasSelection = true;
                 Console.WriteLine("[F]ix your shield.");
-                Console.WriteLine($"   Tools available: {inventory.GetItem("tools").Amount}");
+                Console.WriteLine($"   Tools available: {inventory.GetItem(Inventory.Items.tools).Amount}");
             }
             
             if (!hasSelection){

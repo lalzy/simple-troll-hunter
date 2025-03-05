@@ -6,10 +6,10 @@ public class Item{
         this.MaxAmount = maxAmount;
     }
 
-    public void AddItem(int? amount = 1){
-        int add = amount == null ? MaxAmount : (int) amount;
-        int added = Amount + add;
-        Amount = added > MaxAmount ? MaxAmount : added;
+    public void AddItem(int amount = 1){
+        Amount += amount;
+        if(Amount > MaxAmount)
+            Amount = MaxAmount;
     }
 
     public bool UseItem(){

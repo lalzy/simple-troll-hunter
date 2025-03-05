@@ -16,15 +16,15 @@ public class Rooms{
                 if(validSelections[--choice]){
                     switch(choice){
                         case (int) Display.ValidItemChoices.shield:
-                            Globals.Player.Inventory.GetItem("shield").Amount = newShieldCon;
+                            Globals.Player.Inventory.AddItem(Inventory.Items.shield, newShieldCon);
                         return true;
                         case (int) Display.ValidItemChoices.torch:
-                            Globals.Player.Inventory.AddItem("torch");
+                            Globals.Player.Inventory.AddItem(Inventory.Items.torch);
                         return true;
                         case (int) Display.ValidItemChoices.arrows:
                             Inventory inv = Globals.Player.Inventory;
-                            int arrowCount = new Random().Next(1, inv.GetItem("arrows").MaxAmount - inv.GetItem("arrows").Amount);
-                            inv.AddItem("arrows", arrowCount);
+                            int arrowCount = new Random().Next(1, 3);
+                            inv.AddItem(Inventory.Items.arrows, arrowCount);
                             Display.Rooms.PickedUpArrows(arrowCount);
                         return true;
                         default:

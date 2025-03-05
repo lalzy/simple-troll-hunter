@@ -8,7 +8,7 @@ class Player : Creature{
         archer = 2,
     }
     public Classes Class;
-    public Inventory Inventory = new Inventory();
+    public Inventory Inventory;
     public bool IsBlocking = false;
     
     /// <summary>
@@ -16,6 +16,7 @@ class Player : Creature{
     /// </summary>
     public int BlockRoll = 0;
     public  Player(int hp, int minDamage, int maxDamage, int rangedMin = 1, int rangedmax = 5){
+        Inventory = new Inventory();
         this.MinDamage = minDamage;
         this.MaxDamage = maxDamage;
         Class = Classes.custom;
@@ -27,17 +28,17 @@ class Player : Creature{
     /// </summary>
     /// <returns>The max-health of the shield</returns>
     public int GetShieldHealthBase(){
-        return Inventory.GetItem("shield").MaxAmount;
+        return Inventory.GetItem(Inventory.Items.shield).MaxAmount;
     }
 
     /// <summary>
     /// Repairs the shield if it's damaged.
     /// </summary>
     private void RepairShield(){
-        if(Inventory.GetItem("shield").Amount < Inventory.GetItem("shield").MaxAmount
-        && Inventory.GetItem("tools").Amount > 0){
-            Inventory.GetItem("tools").Amount--;
-            Inventory.GetItem("shield").Amount++;
+        if(Inventory.GetItem(Inventory.Items.shield).Amount < Inventory.GetItem(Inventory.Items.shield).MaxAmount
+        && Inventory.GetItem(Inventory.Items.tools).Amount > 0){
+            Inventory.GetItem(Inventory.Items.tools).Amount--;
+            Inventory.GetItem(Inventory.Items.shield).Amount++;
         }
 
     }
@@ -56,8 +57,8 @@ class Player : Creature{
             case 'h':
                 this.Heal((int) Math.Round(this.BaseHealth * .20));
                 Display.Rooms.Resting();
-                Inventory.GetItem("food").UseItem();
-                Console.WriteLine($"You ate food, food left: {Inventory.GetItem("food").Amount}");
+                Inventory.GetItem(Inventory.Items.food).UseItem();
+                Console.WriteLine($"You ate food, food left: {Inventory.GetItem(Inventory.Items.food).Amount}");
                 return true;
             case 'r':
             case 'f':
@@ -75,8 +76,8 @@ class Player : Creature{
     /// </summary>
     public bool Rest(){
         bool rested = false;
-        if(Inventory.GetItem("food").Amount > 0){
-            if(Display.Rooms.RestMenu(Inventory.GetItem("food").Amount)){
+        if(Inventory.GetItem(Inventory.Items.food).Amount > 0){
+            if(Display.Rooms.RestMenu(Inventory.GetItem(Inventory.Items.food).Amount)){
                 rested = RestInput();
             }
         }else{
@@ -90,8 +91,8 @@ class Player : Creature{
     /// </summary>
     /// <param name="health">The shield's block-count you want</param>
     public void SetShieldHealth(int health = 3){
-        Inventory.GetItem("shield").Amount = health;
-        Inventory.GetItem("shield").MaxAmount = health;
+        Inventory.GetItem(Inventory.Items.shield).Amount = health;
+        Inventory.GetItem(Inventory.Items.shield).MaxAmount = health;
     }
 
     /// <summary>
@@ -99,7 +100,7 @@ class Player : Creature{
     /// </summary>
     public void CheckSurprised(){
         // Torch makes you immune to surprise.
-        if(Inventory.GetItem("torch").Amount == 0){
+        if(Inventory.GetItem(Inventory.Items.torch).Amount == 0){
             if (new Random().Next(1, 100) < Globals.SurprisedChance){
                 this.Stun(); // stuns for 1 turn.
                 Display.SurprisedMessage();
@@ -127,7 +128,7 @@ class Player : Creature{
     /// <returns>Wether player can block or not.</returns>
     public bool CanBlock(){
         Display.ShieldBlockMessage();
-        return Inventory.GetItem("shield").Amount > 0;
+        return Inventory.GetItem(Inventory.Items.shield).Amount > 0;
     }
 
     /// <summary>
@@ -136,7 +137,7 @@ class Player : Creature{
     /// <param name="enemyDamage">How much damage the enemy deals</param>
     public void Block(int enemyDamage){
         Display.BlockedEnemyMessage();
-        Inventory.GetItem("shield").Amount -= (int) Math.Ceiling(enemyDamage / 10.0); 
+        Inventory.GetItem(Inventory.Items.shield).Amount -= (int) Math.Ceiling(enemyDamage / 10.0); 
     }
 
     /// <summary>
@@ -144,7 +145,7 @@ class Player : Creature{
     /// </summary>
     /// <returns>Current health of the shield</returns>
     public int GetShieldHealth(){
-        return Inventory.GetItem("shield").Amount;
+        return Inventory.GetItem(Inventory.Items.shield).Amount;
     }
     
 

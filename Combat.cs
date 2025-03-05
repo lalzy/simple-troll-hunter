@@ -133,7 +133,7 @@ static class Combat{
             case Action.shootArrow:
                 if(Enemy.CurrentEnemy != null){
                     if((FirstTurn || Globals.Player.Class == Player.Classes.archer) || Enemy.CurrentEnemy.Stunned){
-                        if(Globals.Player.Inventory.UseItem("arrows")){
+                        if(Globals.Player.Inventory.UseItem(Inventory.Items.arrows)){
                             Enemy.CurrentEnemy.Stun();
                             Enemy.CurrentEnemy.StunCause = Display.StunCause.arrow;
                             Enemy.CurrentEnemy.Health -= new Random().Next(1,10);
@@ -149,7 +149,7 @@ static class Combat{
             break;
             case Action.torch:
                 if(Enemy.CurrentEnemy != null){
-                    if(Globals.Player.Inventory.UseItem("torch")){
+                    if(Globals.Player.Inventory.UseItem(Inventory.Items.torch)){
                         Enemy.CurrentEnemy.StunCause = Display.StunCause.torch;
                         Enemy.CurrentEnemy.Stun(3); // Stuns for effectively 3 turns.
                         Display.ThrewTorch();
