@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 
 static class Cave{
-    private const int RoomTypeCount = 10;
+    private const int RoomTypeCount = 15;
     private static RoomType _currentRoom;
     public enum RoomType{
         endofCave = -1,
@@ -9,6 +9,7 @@ static class Cave{
         rest = 1,
         armory = 2,
         kitchen = 3,
+        blacksmith = 4,
         enemy = 9,
         boss = 10,
     }
@@ -51,9 +52,17 @@ static class Cave{
                         _cave[floor].Push(RoomType.kitchen);
                     break;
                     case 3:
+                        _cave[floor].Push(RoomType.blacksmith);
+                    break;
                     case 4:
                     case 5:
                     case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
                         _cave[floor].Push(RoomType.empty);
                     break;
                     default:
@@ -94,6 +103,9 @@ static class Cave{
             break;
             case RoomType.armory:
                 skipKeyRead = Rooms.Armory();
+            break;
+            case RoomType.blacksmith:
+                skipKeyRead = Rooms.Blacksmith();
             break;
             case RoomType.rest:
                 skipKeyRead = Globals.Player.Rest();

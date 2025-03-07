@@ -209,7 +209,9 @@ class Display{
             Console.WriteLine("It looks close to death");
         }
     }
-
+    static public void NothingHappened(){
+        Console.WriteLine("Nothing happened...");
+    }
     static public void PrintWelcomeMessage(){
         Console.WriteLine("Welcome to the troll cave.");
         Console.WriteLine("It's currently occupied by a troll, and it's famly (Goblins)");
@@ -240,12 +242,12 @@ class Display{
     }
     public static class Rooms{
         public static void Empty(){
-            switch(new Random().Next(5)){
+            switch(new Random().Next(19)){
                 case 0:
                     Console.WriteLine("Just an empty room...");
                 return;
                 case 1:
-                    Console.WriteLine("A goblin bedchamber. Thankfully, it's empty.");
+                    Console.WriteLine("Ratty bedrolls are strewn across the floor, some still warm.");
                 return;
                 case 2:
                     Console.WriteLine("Looks to be a bathroom.");
@@ -256,10 +258,52 @@ class Display{
                 case 4:
                     Console.WriteLine("An old storage room, absolutely nothing of value");
                 return;
+                case 5:
+                    Console.WriteLine("Dust hangs thick in the air, disturbed only by your footsteps.");
+                return;
+                case 6:
+                    Console.WriteLine("A single candle flickers weakly, struggling against the darkness.");
+                return;
+                case 7:
+                    Console.WriteLine("Rows of wooden shelves stand empty.");
+                return;
+                case 8:
+                    Console.WriteLine("A broken chair sits in the center, as if someone left in a hurry.");
+                return;
+                case 9:
+                    Console.WriteLine("The walls are covered in crude drawings, mostly depicting goblins stabbing things.");
+                return;
+                case 10:
+                    Console.WriteLine("The floor creaks underfoot, protesting your intrusion.");
+                return;
+                case 11:
+                    Console.WriteLine("A distant whisper seems to fade the moment you try to focus on it.");
+                return;
+                case 12:
+                    Console.WriteLine("A lantern swings slightly from a hook, though there's no sign of wind.");
+                return;
+                case 13:
+                    Console.WriteLine("The lingering scent of sweat and damp fur tells you this room was recently occupied.");
+                return;
+                case 14:
+                    Console.WriteLine("A crude wooden table is littered with half-eaten scraps of questionable meat.");
+                return;
+                case 15:
+                    Console.WriteLine("You spot a game of dice left mid-roll—someone was in a hurry.");
+                return;
+                case 16:
+                    Console.WriteLine("A wooden training dummy, covered in knife marks, leans precariously to one side.");
+                return;
+                case 17:
+                    Console.WriteLine("A pair of small, mismatched weapons rest against the wall, forgotten in the rush.");
+                return;
+                case 18:
+                    Console.WriteLine("Empty bottles are scattered about, the pungent smell of fermented mushrooms hanging in the air.");
+                return;
             }
         }
 
-        public static bool HasNoItemSelection(bool[] validSelections){
+        public static bool NoSelection(bool[] validSelections){
             foreach (bool selection in validSelections)
             {
                 if(selection){
@@ -269,6 +313,47 @@ class Display{
             return true;
         }
 
+        public static void InspectSwordDamage(){
+            Console.WriteLine($"Dmg: {Globals.Player.MinDamage} - {Globals.Player.MaxDamage}");
+        }
+
+        public static void SwordSharpened(){
+                    Console.WriteLine("You sharpened it!");}
+
+        public static void SwordBroke(){
+                    Console.WriteLine("You botched it... Sword is weaker");}
+
+        public static void SharpenMenu(){
+            Console.WriteLine("1 - Attempt to tune up the blade (min-damage)");
+            Console.WriteLine("2 - Attempt to Sharpen the blade (max-damage)");
+        }
+        public static void BlackSmithMenu(){
+            Console.WriteLine("You see a sword grinder.\n");
+            Console.WriteLine("1 - Try to sharpen your sword?");
+            Console.WriteLine("2 - Inspect your sword (min/max dmg)");
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>If player can pick up food or not</returns>
+        public static bool DiscoverKitchen(){
+            bool canFillPack = false;
+            Item food = Globals.Player.Inventory.GetItem(Inventory.Items.food);
+
+            Console.WriteLine("You see a kitchen, filled with food");
+
+            Console.WriteLine("1 - Eat until stuffed (+5 hp)");
+            if(food.Amount < food.MaxAmount){
+                Console.WriteLine("2 - Fill your pack");
+                canFillPack = true;
+            }
+            return canFillPack;
+        }
+        public static void FoodFull(){
+            Console.WriteLine("You don't have enough space to pick up any food!");
+        }
         /// <summary>
         /// Armory handling
         /// </summary>
@@ -302,7 +387,7 @@ class Display{
                 Console.WriteLine($"[3] You see some arrows on a table.");
             }
             
-            if(HasNoItemSelection(validSelections)){
+            if(NoSelection(validSelections)){
                 Console.WriteLine("But there's nothing you can use");
             }
 
