@@ -19,27 +19,27 @@ class Game{
             case 'e':
                 Globals.SurprisedChance = 15;
                 Cave.GenerateCave( 1, 10);
-                break;
+                    break;
             case 'm':
                 Cave.GenerateCave(2, 10);
                 Globals.SurprisedChance = 30;
-                break;
+                    break;
             case 'h':
                 Cave.GenerateCave(3, 10);
                 Globals.SurprisedChance = 50;
-                break;
+                    break;
             case 'i':
                 Cave.GenerateCave(5, 10);
                 Globals.Player.SetHealth((int) Math.Round(Globals.Player.Health / 1.25));
                 Globals.SurprisedChance = 50;
-                break;
+                    break;
             default:
                 Cave.GenerateCave(5, 10, true);
                 Globals.Player.SetHealth((int) Math.Round((Globals.Player.Health / 1.25))); 
                 Globals.Player.SetShieldHealth(2);
                 Globals.SurprisedChance = 100;
                 invalidSelection = true;
-            break;
+                break;
         }
         if(invalidSelection){
             Display.InvalidDifficultySelectionMessage();
@@ -109,10 +109,10 @@ class Game{
                 return false;
             case State.explore:
                 CurrentState = Cave.HandleRoomExploration(roomsGoneThrough++);
-                break;
+                    break;
             case State.combat:
                 CurrentState = Combat.CombatTurn(CurrentState);
-                break;
+                    break;
         }
         return true;
     }

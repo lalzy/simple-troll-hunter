@@ -12,6 +12,8 @@ static class CharacterSelection{
                     return CreateArcher();
                 case 3:
                     return CreateBerserker();
+                case 4:
+                    return CreateMagician();
             }
             Console.WriteLine("Invalid Selection");
         }
@@ -39,6 +41,18 @@ static class CharacterSelection{
         player.Inventory.CreateItem(Inventory.Items.food, 0, 1);
         player.Inventory.AddItem(Inventory.Items.torch, 1);
         player.Inventory.CreateItem(Inventory.Items.shield, 0, 0);
+        return player;
+    }
+
+    private static Player CreateMagician (){
+        Player player = new Player(15, 5, 5);
+        player.Inventory.CreateItem(Inventory.Items.tools, 0, 0);
+        player.Inventory.CreateItem(Inventory.Items.arrows, 0, 0);
+        player.Inventory.CreateItem(Inventory.Items.shield, 0, 3);
+        player.Inventory.CreateItem(Inventory.Items.food, 0, 1);
+        player.Inventory.CreateItem(Inventory.Items.Fireball, 10, 20);
+        player.Inventory.CreateItem(Inventory.Items.Freeze, 10, 20);
+        player.Inventory.CreateItem(Inventory.Items.ShieldSpell, 5, 20);
         return player;
     }
 

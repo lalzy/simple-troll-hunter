@@ -68,6 +68,7 @@ static class Combat{
         examine = 'e',
         shootArrow = 's',
         torch = 't',
+        magic = 'm',
     }
 
     /// <summary>
@@ -101,6 +102,8 @@ static class Combat{
                 return Action.torch;
             }else if (input[0] == 's'){
                 return Action.shootArrow;
+            }else if(input[0] == 'm'){
+                return Action.magic;
             }
         }
         // player can always do these actions.
@@ -118,7 +121,7 @@ static class Combat{
         switch(playerAction){
             case Action.attack:
                 Enemy.CurrentEnemy.Health -= Globals.Player.CalcDamage();
-            break;
+                break;
             case Action.block: 
                 // add drinking.
                 Globals.Player.IsBlocking = Globals.Player.CanBlock();
@@ -126,10 +129,10 @@ static class Combat{
                 if(Globals.PlayerTurn){
                     Globals.Player.BlockRoll = Globals.Player.Attack();
                 }
-            break;
+                break;
             case Action.examine: 
                 Display.PrintState(Enemy.CurrentEnemy);
-            break;
+                break;
             case Action.shootArrow:
                 if(Enemy.CurrentEnemy != null){
                     if((FirstTurn || Globals.Player.Class == Player.Classes.archer) || Enemy.CurrentEnemy.Stunned){
@@ -146,7 +149,10 @@ static class Combat{
                     }
                     
                 }
-            break;
+                break;
+            case Action.magic:
+                Magic();
+                break;
             case Action.torch:
                 if(Enemy.CurrentEnemy != null){
                     if(Globals.Player.Inventory.UseItem(Inventory.Items.torch)){
@@ -155,12 +161,52 @@ static class Combat{
                         Display.ThrewTorch();
                     }
                 }
-            break;
+                break;
             default:
                 if(!Globals.Player.Stunned)
                     Display.DoNothingMessage();
-            break;
+                break;
         }
     }
-
+    private static void Magic(){
+        Enemy? enemy = Enemy.CurrentEnemy;
+        if(enemy == null) {
+            return;
+        }
+        Inventory inventory = Globals.Player.Inventory;
+        while(true){
+            Console.WriteLine("1 - Fireball");
+            Console.WriteLine("2 - Freeze");
+            Console.WriteLine("3 - Shield");
+            int.TryParse(Console.ReadLine(), out int choice);
+            switch(choice){
+                case 1: // Fireball
+                    if(inventory.UseItem(Inventory.Items.Fireball)){
+                        enemy.Health -= 20;
+                        if(enemy.IsDead()){
+                            Console.WriteLine($"You burn the {enemy.Name} to cinders!");
+                        }else{
+                            Console.WriteLine($"You cast a fireball at the {enemy.Name}.");
+                        }
+                    }else{
+                        Console.WriteLine("You have no fireball scrolls...");
+                    }
+                return;
+                case 2: // Freeze
+                    if(inventory.UseItem(Inventory.Items.Freeze)){
+                        enemy.Stun(2);
+                        enemy.StunCause = Display.StunCause.freeze;
+                        Console.WriteLine("You freeze the enemy in a block of ice!");
+                    }else{
+                        Console.WriteLine("You have no freeze scrolls");
+                    }
+                return;
+                case 3: // ShieldSpell
+                return;
+                default:
+                    Console.WriteLine("Invalid Selection");
+                    break;
+            }
+        }
+    }
 }

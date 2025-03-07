@@ -62,6 +62,7 @@ class Display{
     public enum StunCause{
         torch = 0,
         arrow = 1,
+        freeze = 2,
     }
     static public void EnemyIsStunned(Enemy enemy){
         switch(enemy.StunCause){
@@ -78,6 +79,10 @@ class Display{
         Console.WriteLine("press {any} key to continue.");
         Console.ReadKey();
         Console.Clear();
+    }
+
+    static public void CastSpell(Enemy enemy){
+        Console.WriteLine($"You roast the {enemy.Name} alive");
     }
 
     static public void ShootArrow(){

@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 
 static class Cave{
-    private const int TotalAmountOfDifferentRooms = 15;
+    private const int TotalAmountOfDifferentRooms = 25;
     private static RoomType _currentRoom;
     public enum RoomType{
         endofCave = -1,
@@ -10,6 +10,7 @@ static class Cave{
         armory = 2,
         kitchen = 3,
         blacksmith = 4,
+        library = 5,
         enemy = 9,
         boss = 10,
     }
@@ -44,17 +45,19 @@ static class Cave{
                 switch(rnd.Next(TotalAmountOfDifferentRooms)){ // Reflect room types.
                     case 0:
                         _cave[floor].Push(RoomType.armory);
-                    break;
+                        break;
                     case 1:
                         _cave[floor].Push(RoomType.rest);
-                    break;
+                        break;
                     case 2:
                         _cave[floor].Push(RoomType.kitchen);
-                    break;
+                        break;
                     case 3:
                         _cave[floor].Push(RoomType.blacksmith);
-                    break;
+                        break;
                     case 4:
+                        _cave[floor].Push(RoomType.library);
+                        break;
                     case 5:
                     case 6:
                     case 7:
@@ -64,10 +67,10 @@ static class Cave{
                     case 11:
                     case 12:
                         _cave[floor].Push(RoomType.empty);
-                    break;
+                        break;
                     default:
                         _cave[floor].Push(RoomType.enemy);
-                    break;
+                        break;
                 }
             }
         }
@@ -101,19 +104,19 @@ static class Cave{
         switch(_currentRoom){
             case RoomType.empty:
                 Display.Rooms.Empty();
-            break;
+                break;
             case RoomType.armory:
                 skipKeyRead = Rooms.Armory();
-            break;
+                break;
             case RoomType.blacksmith:
                 skipKeyRead = Rooms.Blacksmith();
-            break;
+                break;
             case RoomType.rest:
                 skipKeyRead = Globals.Player.Rest();
-            break;
+                break;
             case RoomType.kitchen:
                 skipKeyRead = Rooms.Kitchen();
-            break;
+                break;
         }
         if(!skipKeyRead){
             Display.PressAnyKey();

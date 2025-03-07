@@ -1,4 +1,8 @@
 public class Rooms{
+    public static bool Libray(){
+        return false;
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -29,10 +33,10 @@ public class Rooms{
                 }else if (improvement > 0){
                     Display.Rooms.SwordSharpened();
                 }
-                break;
+                    break;
             case 2:
                 Display.Rooms.InspectSwordDamage();
-                break;
+                    break;
         }
     
         return false;
@@ -50,7 +54,6 @@ public class Rooms{
                 Console.WriteLine("You eat he food and feel your health increase!");
                 Globals.Player.Health += 5;
                 return true;
-            break;
             case 2:
                 if(food.Amount < food.MaxAmount){
                     food.Amount = food.MaxAmount;
@@ -60,7 +63,7 @@ public class Rooms{
                 return true;
             default:
                 Display.DoNothingMessage();
-            break;
+                break;
         }
         return false;
     }
