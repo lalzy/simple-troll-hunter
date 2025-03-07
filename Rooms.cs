@@ -1,4 +1,8 @@
 public class Rooms{
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns>Boolean for if it should skip press-any-key or not</returns>
     public static bool Blacksmith(){
         Display.Rooms.BlackSmithMenu();
         int.TryParse(Console.ReadLine(), out int choice);
@@ -25,15 +29,18 @@ public class Rooms{
                 }else if (improvement > 0){
                     Display.Rooms.SwordSharpened();
                 }
-                return false;
+                break;
             case 2:
                 Display.Rooms.InspectSwordDamage();
-                return true;
+                break;
         }
     
         return false;
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns>Boolean for if it should skip press-any-key or not</returns>
     public static bool Kitchen(){
         Item food = Globals.Player.Inventory.GetItem(Inventory.Items.food);
         bool canPickUpFood = Display.Rooms.DiscoverKitchen();

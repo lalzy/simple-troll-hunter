@@ -85,6 +85,7 @@ static class Cave{
             _floor++;
             Display.NewFloorText();
             Globals.Player.Rest();
+            Console.Clear();
             return _cave[_floor].Pop();
         }else{
             return RoomType.endofCave;
@@ -132,6 +133,10 @@ static class Cave{
         Console.WriteLine($"room: {rooms}");
         if (Enemy.CurrentEnemy != null){
             Combat.FirstTurn = true;
+            // Guranteed to be surprised against the troll.
+            if(Enemy.CurrentEnemy.GetType() == typeof(Troll)){
+                Globals.SurprisedChance = 100;
+            }
             return Game.State.combat;
         }else if(Cave.RoomType.endofCave == _currentRoom){
             return Game.State.won;

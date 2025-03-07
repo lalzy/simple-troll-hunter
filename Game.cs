@@ -120,6 +120,7 @@ class Game{
     /// Initializes the player.
     /// </summary>
     static void CreatePlayer(){
+        Display.ChooseCharacter();
         CharacterSelection.StartCharacterSelection();
     }
 

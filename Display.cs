@@ -6,17 +6,26 @@ class Display{
         Console.WriteLine("press any key to continue");
     }
 
-    public static void KnightDetails(){
-        Console.WriteLine("Starts with a shield, 50HP, 1 set of tools, 1 torch, and 3 pieces of food.");
+    public static void ChooseCharacter(){
+        Console.WriteLine("Pick a character to play as:");
     }
 
-    public static void ArcherDetails(){
-        Console.WriteLine("Starts with 20 arrows, Higher base-damage for arrows than knight. 30HP, can shoot outside of first-turn");
+    private static string KnightDetails(){
+        return "50HP, Inventory[Shield, 1 tool, 1 torch, 3 food]\n"+
+               "    - Moderate melee damage, low ranged damage";
+    }
+
+    private static string ArcherDetails(){
+        return "30HP, Inventory[20 arrows, 3 food, 1 torch]\n"+
+        "    - Can shoot arrows outside of first turn. Low Melee damage, high Ranged damage";
     }
 
     public static void CharacterSelectionMenu(){
         Console.WriteLine("1 - Knight");
+        Console.WriteLine("   " + KnightDetails());
+
         Console.WriteLine("2 - Archer");
+        Console.WriteLine("   " + ArcherDetails());
     }
 
     public static void SurprisedMessage (){
@@ -87,9 +96,10 @@ class Display{
 
     static public void SpawnEnemyText(Enemy enemy){
         if(enemy.GetType() == typeof(Troll)){
-            Console.WriteLine("The troll appears!");
+            Console.WriteLine("From the darkness ahead, a massive black troll emerges!");
+            Console.WriteLine("Its presence is overwhelming—this will be your toughest fight yet!");
         }else if (enemy.GetType() == typeof(GoblinBoss)){
-            Console.WriteLine("Room is guarded by a big Goblin!");
+            Console.WriteLine("A towering Goblin Boss blocks your path, eyes gleaming with malice!");
         }else{
             Console.WriteLine($"an {enemy.Name} emerge from the shadows!");
         }
@@ -172,14 +182,48 @@ class Display{
     }
 
     static public void VictoryMessage (){
-        Console.WriteLine("Congratualations, you won!");
+        Player player = Globals.Player;
+        Console.WriteLine("The sound of the troll's massive body hitting the stone floor echoes throughougt the chamber.");
+        if(player.Health < (player.BaseHealth / 4)){
+            Console.WriteLine("Bloody and beaten, you barely stand, but even so, you did it, you won!");
+        }else if (player.Health < (player.BaseHealth / 2)){
+            Console.WriteLine("It was a thought battle, but you remain standing, with scars to prove your victory!");
+        }else if(player.Health >= player.BaseHealth){
+            Console.WriteLine("You look at the dead corpse, it never got a chance to even scratch you.");
+            Console.WriteLine("Is this really all? This is what has been terrorizing the locals for so long?");
+        }else{
+            Console.WriteLine("With a few cuts and bruises, you stand victorious. It wasn't easy, but you've triumphed over the threat.");
+        }
+
+        Console.WriteLine("You leave the old, now empty keep behind, your job done.");
     }
+
 
     static public void TieMessage(){
         Console.WriteLine("but, you died..");
     }
 
     static public void LoseMessage(){
+        switch(new Random().Next(5)){
+            case 0:
+                Console.WriteLine("The light fades from your eyes as the darkness takes hold. You fought valiantly, but this battle was not yours to win.");
+            return;
+            case 1:
+                Console.WriteLine("Your body succumbs to the wounds, and the world slips away. All sound seems to fade...");
+
+            return;
+            case 2:
+                Console.WriteLine("A final blow lands, and the ground rushes up to meet you. You’ve given everything, but everything wasn't enough.");
+
+            return;
+            case 3:
+            Console.WriteLine("With one final, crushing blow, everything goes dark. The keep's secrets remain locked away, as your body lies still upon the cold stone.");
+            return;
+            case 4:
+            Console.WriteLine("The darkness closes in around you. The battle is lost, and your journey ends here, in the depths of the forgotten keep.");
+
+            return;
+        }
         Console.WriteLine("You died...");
     }
 
@@ -189,7 +233,7 @@ class Display{
     }
 
     static public void PrintCaveEntranceMessage(){
-        Console.WriteLine("procceed inside?");
+        Console.WriteLine("Do you wish to venture inside");
         Console.WriteLine("[Y]es - to enter");
         Console.WriteLine("[N]o - to head back");
     }
@@ -213,11 +257,12 @@ class Display{
         Console.WriteLine("Nothing happened...");
     }
     static public void PrintWelcomeMessage(){
-        Console.WriteLine("Welcome to the troll cave.");
-        Console.WriteLine("It's currently occupied by a troll, and it's famly (Goblins)");
-        Console.WriteLine("You've been tasked to clear out the cave.");
-        Console.WriteLine("Remember, you can always type {exit} or {quit} to exit");
-        Console.WriteLine("---------------------------------------------------------------\n");
+     Console.WriteLine("Welcome to the Forgotten Keep.");
+    Console.WriteLine("This once-grand castle is now overrun by goblins and their ilk.");
+    Console.WriteLine("Your job is to clear these ruins and ridding it of its unwanted occupants.");
+    Console.WriteLine("Remember, you can always type {exit} or {quit} to leave this forsaken place.");
+    Console.WriteLine("---------------------------------------------------------------\n");
+
     }
 
     static public void DifficultyMessage(){
