@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 
 static class Cave{
-    private const int RoomTypeCount = 15;
+    private const int TotalAmountOfDifferentRooms = 15;
     private static RoomType _currentRoom;
     public enum RoomType{
         endofCave = -1,
@@ -41,7 +41,7 @@ static class Cave{
 
             for (int room = 0; room < rooms - 1; room++){
                 // We use a switch due to us wanting to define different rooms of different types later.
-                switch(rnd.Next(RoomTypeCount)){ // Reflect room types.
+                switch(rnd.Next(TotalAmountOfDifferentRooms)){ // Reflect room types.
                     case 0:
                         _cave[floor].Push(RoomType.armory);
                     break;

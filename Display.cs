@@ -17,7 +17,12 @@ class Display{
 
     private static string ArcherDetails(){
         return "30HP, Inventory[20 arrows, 3 food, 1 torch]\n"+
-        "    - Can shoot arrows outside of first turn. Low Melee damage, high Ranged damage";
+                "    - Can shoot arrows outside of first turn. Low Melee damage, high Ranged damage";
+    }
+
+    private static string BerserkerDetails(){
+        return "60HP, Inventory[1 torch]\n"+
+                "    - Can't use shields, High Melee damage, low ranged damage.";
     }
 
     public static void CharacterSelectionMenu(){
@@ -26,6 +31,9 @@ class Display{
 
         Console.WriteLine("2 - Archer");
         Console.WriteLine("   " + ArcherDetails());
+
+        Console.WriteLine("3 - Berserker");
+        Console.WriteLine("    " + BerserkerDetails());
     }
 
     public static void SurprisedMessage (){
