@@ -65,7 +65,6 @@ static class Combat{
         attack = 'a',
         block = 'b',
         status = 'c',
-        examine = 'e',
         shootArrow = 's',
         torch = 't',
         magic = 'm',
@@ -96,8 +95,6 @@ static class Combat{
         if(Globals.PlayerTurn){
             if(input[0] == 'a'){
                 return Action.attack;
-            }else if(input[0] == 'e'){
-                return Action.examine;
             }else if(input[0] == 't'){
                 return Action.torch;
             }else if (input[0] == 's'){
@@ -130,9 +127,6 @@ static class Combat{
                     Globals.Player.BlockRoll = Globals.Player.Attack();
                 }
                 break;
-            case Action.examine: 
-                Display.PrintState(Enemy.CurrentEnemy);
-                break;
             case Action.shootArrow:
                 if(Enemy.CurrentEnemy != null){
                     if((FirstTurn || Globals.Player.Class == Player.Classes.archer) || Enemy.CurrentEnemy.Stunned){
@@ -163,7 +157,7 @@ static class Combat{
                 }
                 break;
             default:
-                if(!Globals.Player.Stunned)
+                if(!Globals.Player.Stunned && Globals.PlayerTurn)
                     Display.DoNothingMessage();
                 break;
         }

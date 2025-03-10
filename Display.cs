@@ -119,10 +119,13 @@ class Display{
     }
 
     static public void PlayerHUD(bool playerTurn, Enemy enemy, Player player){
+        Console.WriteLine("----------------------------");
         if(playerTurn){
             Console.WriteLine($"You're facing a, <{enemy.Name}>");
+            PrintState(enemy);
         }
-        Console.WriteLine($"HP: {player.Health}");
+        Console.WriteLine("----------------------------");
+        Console.WriteLine($"Your Health: {player.Health}");
     }
 
     static public void PlayerMenu(bool playerTurn, Enemy currentEnemy, Player player){
@@ -135,7 +138,6 @@ class Display{
         Console.WriteLine("-------------------------");
         if(playerTurn){
             Console.WriteLine("[A]ttack with your sword!");
-            Console.WriteLine("[E]xamine the enemy, see it's condition.");
             if(player.Inventory.GetItem(Inventory.Items.torch).Amount > 0){
                 Console.WriteLine("[T]hrow your torch at the enemy!");
             }
@@ -169,14 +171,17 @@ class Display{
     }
 
     public static void TakeDamagePrint(int damage){
-        if (damage <= (Globals.Player.MaxDamage / 4)){
-            Console.WriteLine("He barely scratched you..");
-        }else if (damage <= (Globals.Player.MaxDamage / 2)){
-            Console.WriteLine("That hurt");
-        }else if(damage == Globals.Player.MaxDamage){
-            Console.WriteLine("That's not good...");
-        }else{
-            Console.WriteLine("You should learn to dodge...");
+        Enemy? enemy = Enemy.CurrentEnemy;
+        if (Enemy.CurrentEnemy != null){
+            if (damage >= enemy.MaxDamage * .90){
+                Console.WriteLine("It hits you with all it's might!");
+            }else if (damage >= enemy.MaxDamage * .50){
+                Console.WriteLine("It managed a good hit on you");
+            }else if(damage >= enemy.MaxDamage * .25){
+                Console.WriteLine("It seems to have stumbled and hit off it's mark!");
+            }else{
+                Console.WriteLine("It barely managed to swing the weapon!");
+            }
         }
     }
 
@@ -250,22 +255,22 @@ class Display{
         Console.WriteLine("[Y]es - to enter");
         Console.WriteLine("[N]o - to head back");
     }
-    static public void PrintState(Creature? creature){
-        if(creature == null){ 
-            Console.WriteLine("There is no creature here");
-            return;
-        }else if(creature.BaseHealth == creature.Health){
+    static public void PrintState(Creature creature){
+        if(creature.Health == creature.BaseHealth){
             Console.WriteLine("It's not injured at all!");
-        }else if(creature.BaseHealth / 2 < creature.Health){
-            Console.WriteLine("It's barely injured");
-        }else if(creature.BaseHealth / 2 > creature.Health){
-            Console.WriteLine("It seems minorly injured");
-        }else if (creature.BaseHealth / 4 > creature.Health){
-            Console.WriteLine("It seems quite injured");
+        }else if(creature.Health >= creature.BaseHealth * .85){
+            Console.WriteLine("It's barely injured.");
+        }else if (creature.Health >= creature.BaseHealth * .50){
+            Console.WriteLine("It's injured.");
+        }else if(creature.Health >= creature.BaseHealth * .25){
+            Console.WriteLine("It's very injured.");
+        }else if(creature.Health <= creature.BaseHealth * .05){
+            Console.WriteLine("It's a miracle it's still standing!");
         }else{
-            Console.WriteLine("It looks close to death");
+            Console.WriteLine("It's close to death!");
         }
     }
+
     static public void NothingHappened(){
         Console.WriteLine("Nothing happened...");
     }
