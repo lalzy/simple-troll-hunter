@@ -38,9 +38,14 @@ static class CharacterSelection{
 
     private static Player CreateBerserker(){
         Player player = new Player(60, 8, 15);
-        player.Inventory.CreateItem(Inventory.Items.food, 0, 1);
+        player.Inventory.CreateItem(Inventory.Items.food, 0, 2);
+        player.Abilities.Add(Player.AbilityEnum.ChargeUp);
         player.Inventory.AddItem(Inventory.Items.torch, 1);
         player.Inventory.CreateItem(Inventory.Items.shield, 0, 0);
+        player.Inventory.CreateItem(Inventory.Items.arrows, 0, 0);
+        player.Inventory.CreateItem(Inventory.Items.Fireball, 0, 0);
+        player.Inventory.CreateItem(Inventory.Items.Freeze, 0, 0);
+        player.Inventory.CreateItem(Inventory.Items.ShieldSpell, 0, 0);
         return player;
     }
 

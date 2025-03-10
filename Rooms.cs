@@ -16,7 +16,7 @@ public class Rooms{
             case 1:
                 int min = Globals.Player.MinDamage;
                 int max = Globals.Player.MaxDamage;
-                int improvement = new Random().Next(-5, 5);
+                int improvement = new Random().Next(-2, 5);
                 Display.Rooms.SharpenMenu();
                 int.TryParse(Console.ReadLine(), out int sharpenChoice);
                 Console.Clear();
@@ -32,6 +32,8 @@ public class Rooms{
                     Display.Rooms.SwordBroke();
                 }else if (improvement > 0){
                     Display.Rooms.SwordSharpened();
+                }else{
+                    Display.Rooms.SwordNothing();
                 }
                     break;
             case 2:

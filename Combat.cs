@@ -68,6 +68,8 @@ static class Combat{
         shootArrow = 's',
         torch = 't',
         magic = 'm',
+        chargeUp = 'p',
+        skip = '-', // Just empty
     }
 
     /// <summary>
@@ -75,10 +77,14 @@ static class Combat{
     /// </summary>
     /// <returns>Action player choose to perform</returns>
     static Action GetPlayerAction(){
-        Display.PlayerMenu(Globals.PlayerTurn, Enemy.CurrentEnemy, Globals.Player);
+        bool AtLeastOneSelection = Display.PlayerMenu(Globals.PlayerTurn, Enemy.CurrentEnemy, Globals.Player);
+        if(!AtLeastOneSelection){
+            return Action.skip;
+        }
+    
         string? input = Console.ReadLine();
         Console.Clear();
-        
+
         // Always able to exit
         if(input == "exit" || input == "quit"){
             Environment.Exit(0);
@@ -101,6 +107,10 @@ static class Combat{
                 return Action.shootArrow;
             }else if(input[0] == 'm'){
                 return Action.magic;
+            }else if(input[0] == 'p'){
+                if(Globals.Player.Abilities.Contains(Player.AbilityEnum.ChargeUp)){
+                    return Action.chargeUp;
+                }
             }
         }
         // player can always do these actions.
@@ -114,18 +124,20 @@ static class Combat{
     /// Executes player's action based on what he choose to do.
     /// </summary>
     static void PlayerAction(){
-        Action playerAction = GetPlayerAction();     
+        Action playerAction = GetPlayerAction();
         switch(playerAction){
+            case Action.skip:
+                return;
             case Action.attack:
                 Enemy.CurrentEnemy.Health -= Globals.Player.CalcDamage();
                 break;
             case Action.block: 
                 // add drinking.
                 Globals.Player.IsBlocking = Globals.Player.CanBlock();
-                // Only get the bonus if we spend entire turn blocking, and not block as reaction.
-                if(Globals.PlayerTurn){
-                    Globals.Player.BlockRoll = Globals.Player.Attack();
-                }
+                break;
+            case Action.chargeUp:
+                Display.ChargeUp();
+                Globals.Player.ExtraDamage = (int) 0.5 * Globals.Player.Attack(); // +50%
                 break;
             case Action.shootArrow:
                 if(Enemy.CurrentEnemy != null){

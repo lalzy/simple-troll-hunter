@@ -22,7 +22,7 @@ class Display{
 
     private static string BerserkerDetails(){
         return "60HP, Inventory[1 torch]\n"+
-                "    - Can't use shields, High Melee damage, low ranged damage.";
+                "    - Can't use shields (so can't blocK), High Melee damage, can't use arrows.";
     }
 
     public static void CharacterSelectionMenu(){
@@ -54,7 +54,9 @@ class Display{
                 return "";
         }
     }
-
+    static public void ChargeUp(){
+        Console.WriteLine("You get ready to strike hard next turn!");
+    }
     static public void ThrewTorch(){
         Console.WriteLine("You threw the torch at the enemy, setting it aflame!");
     }
@@ -119,16 +121,17 @@ class Display{
     }
 
     static public void PlayerHUD(bool playerTurn, Enemy enemy, Player player){
-        Console.WriteLine("----------------------------");
         if(playerTurn){
+            Console.WriteLine("----------------------------");
             Console.WriteLine($"You're facing a, <{enemy.Name}>");
             PrintState(enemy);
+            Console.WriteLine("----------------------------");
+            Console.WriteLine($"Your Health: {player.Health}");
         }
-        Console.WriteLine("----------------------------");
-        Console.WriteLine($"Your Health: {player.Health}");
     }
 
-    static public void PlayerMenu(bool playerTurn, Enemy currentEnemy, Player player){
+    static public bool PlayerMenu(bool playerTurn, Enemy currentEnemy, Player player){
+        bool atLeastOneValid = false;
         PlayerHUD(playerTurn, currentEnemy, player);
         if(player.Stunned && playerTurn){
             player.ProgressStunned();
@@ -137,6 +140,7 @@ class Display{
         }
         Console.WriteLine("-------------------------");
         if(playerTurn){
+            atLeastOneValid = true;
             Console.WriteLine("[A]ttack with your sword!");
             if(player.Inventory.GetItem(Inventory.Items.torch).Amount > 0){
                 Console.WriteLine("[T]hrow your torch at the enemy!");
@@ -145,16 +149,22 @@ class Display{
                 Console.WriteLine("[S]hoot an arrow");
                 Console.WriteLine($"     Arrows: {player.Inventory.GetItem(Inventory.Items.arrows).Amount}");
             }
+            if(player.Abilities.Contains(Player.AbilityEnum.ChargeUp) && player.ExtraDamage == 0){
+                Console.WriteLine("[P]ower up your next attack increasing the damage");
+            }
         }
-        if(player.GetShieldHealth() > 0 && !player.IsBlocking && !Globals.Player.Stunned){
-            string extra = playerTurn ? "(and do 2 attack rolls, keeping the highest)" : "";
-            Console.WriteLine($"[B]lock with your shield{extra}.");
+        if(player.GetShieldHealth() > 0 && !player.IsBlocking && !Globals.PlayerTurn && !Globals.Player.Stunned){
+            atLeastOneValid = true;
+            Console.WriteLine("[B]lock with your shield.");
             Console.WriteLine($"     Shield Condition:{ShieldConditionText()}");
         }
-        string text = playerTurn ? "skip" : "continue";
-        Console.WriteLine($"press enter to {text}");
-        
-        Console.Write(">> ");
+        if(atLeastOneValid){
+            string text = playerTurn ? "skip" : "continue";
+            Console.WriteLine($"press enter to {text}");
+            
+            Console.Write(">> ");
+        }
+        return atLeastOneValid;
     }
 
 
@@ -380,11 +390,15 @@ class Display{
             Console.WriteLine($"Dmg: {Globals.Player.MinDamage} - {Globals.Player.MaxDamage}");
         }
 
+        public static void SwordNothing(){
+            Console.WriteLine("You made no difference");
+        }
+
         public static void SwordSharpened(){
-                    Console.WriteLine("You sharpened it!");}
+            Console.WriteLine("You sharpened it!");}
 
         public static void SwordBroke(){
-                    Console.WriteLine("You botched it... Sword is weaker");}
+            Console.WriteLine("You botched it... Sword is weaker");}
 
         public static void SharpenMenu(){
             Console.WriteLine("1 - Attempt to tune up the blade (min-damage)");

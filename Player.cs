@@ -2,6 +2,14 @@ using System.Collections;
 using System.Security.Cryptography;
 
 class Player : Creature{
+    // Make classes have unique abilities, and move some things, like spells, from items to here.
+    public enum AbilityEnum{
+        ChargeUp = 0,
+        blacksmithing = 1,
+        BowMaster = 2, // Jump back after an arrow is shot
+
+    }
+    public List<AbilityEnum> Abilities;
     public enum Classes{
         custom = 0,
         knight = 1,
@@ -10,13 +18,15 @@ class Player : Creature{
     public Classes Class;
     public Inventory Inventory;
     public bool IsBlocking = false;
+    public bool skipped;
     
     /// <summary>
-    /// Damage roll if blocking was a full action.
+    /// Additional Damage
     /// </summary>
-    public int BlockRoll = 0;
+    public int ExtraDamage = 0;
     public  Player(int hp, int minDamage, int maxDamage, int rangedMin = 1, int rangedmax = 5){
         Inventory = new Inventory();
+        Abilities = new List<AbilityEnum>();
         this.MinDamage = minDamage;
         this.MaxDamage = maxDamage;
         Class = Classes.custom;
@@ -113,13 +123,12 @@ class Player : Creature{
     /// </summary>
     /// <returns>The damage dealt</returns>
     public int CalcDamage (){
-            int damage = this.Attack();
-            Display.PlayerAttack(damage);
-            if (this.BlockRoll > damage){
-                damage = this.BlockRoll;
-            }
-            this.BlockRoll = 0; // reset block-roll
-            return damage;
+        int damage = this.Attack();
+        damage += ExtraDamage;
+        ExtraDamage = 0;
+        
+        Display.PlayerAttack(damage);
+        return damage;
     }
 
     /// <summary>
