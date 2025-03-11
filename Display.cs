@@ -21,8 +21,14 @@ class Display{
     }
 
     private static string BerserkerDetails(){
-        return "60HP, Inventory[1 torch]\n"+
+        return "60HP, Inventory[Nothing]\n"+
                 "    - Can't use shields (so can't blocK), High Melee damage, can't use arrows.";
+    }
+
+    private static string MagicianDetails(){
+        return "30HP, Inventory[1 food, 1 torch]]\n" +
+                "    - Starts with 5 of each spell. Low damage, can't use arrows";
+                // "      Has a spell that lights up, giving you 5 rooms of light";
     }
 
     public static void CharacterSelectionMenu(){
@@ -34,6 +40,9 @@ class Display{
 
         Console.WriteLine("3 - Berserker");
         Console.WriteLine("    " + BerserkerDetails());
+
+        Console.WriteLine("4 - Magician");
+        Console.WriteLine("    " + MagicianDetails());
     }
 
     public static void SurprisedMessage (){
@@ -88,7 +97,7 @@ class Display{
     }
 
     static public void ShootArrow(){
-        if(Globals.Player.Abilities.Contains(Player.AbilityEnum.BowMaster)){
+        if(Globals.Player.Perks.Contains(Player.PerksEnum.BowMaster)){
             Console.WriteLine("You dodge back as you shoot an arrow. You're too quick for the enemy!");
         }else{
             Console.WriteLine("You shot an arrow at the enemy!");
@@ -130,6 +139,26 @@ class Display{
         }
     }
 
+    static public void MagicMenu(){
+        Player player = Globals.Player;
+        Spell? fireball = player.GetSpell(Spell.ValidSpells.Fireball);
+        Spell? freeze = player.GetSpell(Spell.ValidSpells.Freeze);
+        Spell? shield = player.GetSpell(Spell.ValidSpells.ShieldSpell);
+
+        if(fireball != null && fireball.Amount > 0){
+            Console.WriteLine("1 - Fireball");
+            Console.WriteLine($"   - {fireball.Amount} Damages the enemy with high-damage");
+        }
+        if(freeze != null && freeze.Amount > 0){
+            Console.WriteLine("2 - Freeze");
+            Console.WriteLine($"   - {freeze.Amount} Freezes (stuns) the enemy temporarily");
+        }
+        if(shield != null && shield.Amount > 0){
+            Console.WriteLine("3 - Shield");
+            Console.WriteLine($"   - {shield.Amount}");
+        }
+    }
+
     static public bool PlayerMenu(bool playerTurn, Enemy currentEnemy, Player player){
         bool atLeastOneValid = false;
         PlayerHUD(playerTurn, currentEnemy, player);
@@ -145,12 +174,15 @@ class Display{
             if(player.Inventory.GetItem(Inventory.Items.torch).Amount > 0){
                 Console.WriteLine("[T]hrow your torch at the enemy!");
             }
-            if((Combat.FirstTurn || player.Abilities.Contains(Player.AbilityEnum.BowMaster)) && player.Inventory.GetItem(Inventory.Items.arrows).Amount > 0){
+            if((Combat.FirstTurn || player.Perks.Contains(Player.PerksEnum.BowMaster)) && player.Inventory.GetItem(Inventory.Items.arrows).Amount > 0){
                 Console.WriteLine("[S]hoot an arrow");
                 Console.WriteLine($"     Arrows: {player.Inventory.GetItem(Inventory.Items.arrows).Amount}");
             }
-            if(player.Abilities.Contains(Player.AbilityEnum.ChargeUp) && player.ExtraDamage == 0){
+            if(player.Perks.Contains(Player.PerksEnum.ChargeUp) && player.ExtraDamage == 0){
                 Console.WriteLine("[P]ower up your next attack increasing the damage");
+            }
+            if(player.SpellCount() > 0){
+                Console.WriteLine("[M]agic menu");
             }
         }
         if(player.GetShieldHealth() > 0 && !player.IsBlocking && !Globals.PlayerTurn && !Globals.Player.Stunned){
@@ -182,7 +214,7 @@ class Display{
 
     public static void TakeDamagePrint(int damage){
         Enemy? enemy = Enemy.CurrentEnemy;
-        if (Enemy.CurrentEnemy != null){
+        if (enemy != null){
             if (damage >= enemy.MaxDamage * .90){
                 Console.WriteLine("It hits you with all it's might!");
             }else if (damage >= enemy.MaxDamage * .50){
@@ -471,6 +503,9 @@ class Display{
             return validSelections;
         }
 
+        public static void MagicRest(){
+            Console.WriteLine("You restore some of your magic");
+        }
 
         public static void Resting(){
             Console.WriteLine("You rested");
@@ -488,6 +523,10 @@ class Display{
                 hasSelection = true;
                 Console.WriteLine("[F]ix your shield.");
                 Console.WriteLine($"   Tools available: {inventory.GetItem(Inventory.Items.tools).Amount}");
+            }
+            if(Globals.Player.SpellCount() > 0){
+                hasSelection = true;
+                Console.WriteLine("[M]to restore some of your spells");
             }
             
             if (!hasSelection){

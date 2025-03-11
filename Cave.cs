@@ -103,6 +103,7 @@ static class Cave{
         }
     }
 
+
     /// <summary>
     /// Different types of 'empty' rooms with unique effects are handled here.
     /// </summary>

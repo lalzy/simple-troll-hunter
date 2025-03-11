@@ -3,18 +3,58 @@ using System.Security.Cryptography;
 
 class Player : Creature{
     // Make classes have unique abilities, and move some things, like spells, from items to here.
-    public enum AbilityEnum{
+    public enum PerksEnum{
         ChargeUp = 0,
         blacksmithing = 1,
         BowMaster = 2, // Jump back after an arrow is shot
 
     }
-    public List<AbilityEnum> Abilities;
+    public List<PerksEnum> Perks;
     public enum Classes{
         custom = 0,
         knight = 1,
         archer = 2,
     }
+    public List<Spell> Spells;
+
+    // public bool ExploreSpell(Spell.ValidSpells spell){
+    //     switch(spell){
+    //         case Spell.ValidSpells.Light:
+    //             return true;
+    //     }
+    //     return false;
+    // }
+
+    /// <summary>
+    /// Get the total count of spells you have access too.
+    /// </summary>
+    /// <returns>returns the total amount of spells available</returns>
+    public int SpellCount(bool exploreOnly = false){
+        int count = 0;
+        foreach(Spell spell in Spells){
+            // if(exploreOnly){
+            //     if(ExploreSpell(spell.SpellType)){
+            //         count += spell.Amount;
+            //     }else{
+            //         continue;
+            //     }
+            // }else{
+                count += spell.Amount;
+            // }
+        }
+        return count;
+    }
+
+    public void RestoreSpells(){
+        foreach(Spell spell in Spells){
+            spell.Restore();
+        }
+    }
+
+    public Spell? GetSpell(Spell.ValidSpells spellToCheck){
+        return (from spell in Spells where spell.SpellType == spellToCheck select spell).FirstOrDefault();
+    }
+
     //public Classes Class;
     public Inventory Inventory;
     public bool IsBlocking = false;
@@ -26,7 +66,7 @@ class Player : Creature{
     public int ExtraDamage = 0;
     public  Player(int hp, int minDamage, int maxDamage, int rangedMin = 1, int rangedmax = 5){
         Inventory = new Inventory();
-        Abilities = new List<AbilityEnum>();
+        Perks = new List<PerksEnum>();
         this.MinDamage = minDamage;
         this.MaxDamage = maxDamage;
         // Class = Classes.custom;
@@ -70,6 +110,10 @@ class Player : Creature{
                 Inventory.GetItem(Inventory.Items.food).UseItem();
                 Console.WriteLine($"You ate food, food left: {Inventory.GetItem(Inventory.Items.food).Amount}");
                 return true;
+            case 'm':
+                Display.Rooms.MagicRest();
+                RestoreSpells();
+                return true;
             case 'r':
             case 'f':
                 Display.Rooms.FixShield();
@@ -110,7 +154,8 @@ class Player : Creature{
     /// </summary>
     public void CheckSurprised(){
         // Torch makes you immune to surprise.
-        if(Inventory.GetItem(Inventory.Items.torch).Amount == 0){
+        if(Inventory.GetItem(Inventory.Items.torch).Amount > 0) return;
+        else{
             if (new Random().Next(1, 100) < Globals.SurprisedChance){
                 this.Stun(); // stuns for 1 turn.
                 Display.SurprisedMessage();
@@ -156,8 +201,4 @@ class Player : Creature{
     public int GetShieldHealth(){
         return Inventory.GetItem(Inventory.Items.shield).Amount;
     }
-    
-
-
-
 }

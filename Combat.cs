@@ -108,7 +108,7 @@ static class Combat{
             }else if(input[0] == 'm'){
                 return Action.magic;
             }else if(input[0] == 'p'){
-                if(Globals.Player.Abilities.Contains(Player.AbilityEnum.ChargeUp)){
+                if(Globals.Player.Perks.Contains(Player.PerksEnum.ChargeUp)){
                     return Action.chargeUp;
                 }
             }
@@ -141,7 +141,7 @@ static class Combat{
                 break;
             case Action.shootArrow:
                 if(Enemy.CurrentEnemy != null){
-                    if((FirstTurn || Globals.Player.Abilities.Contains(Player.AbilityEnum.BowMaster)) || Enemy.CurrentEnemy.Stunned){
+                    if((FirstTurn || Globals.Player.Perks.Contains(Player.PerksEnum.BowMaster)) || Enemy.CurrentEnemy.Stunned){
                         if(Globals.Player.Inventory.UseItem(Inventory.Items.arrows)){
                             Enemy.CurrentEnemy.Stun();
                             Enemy.CurrentEnemy.StunCause = Display.StunCause.arrow;
@@ -179,15 +179,14 @@ static class Combat{
         if(enemy == null) {
             return;
         }
-        Inventory inventory = Globals.Player.Inventory;
+        Player player = Globals.Player;
         while(true){
-            Console.WriteLine("1 - Fireball");
-            Console.WriteLine("2 - Freeze");
-            Console.WriteLine("3 - Shield");
+            Display.MagicMenu();
             int.TryParse(Console.ReadLine(), out int choice);
             switch(choice){
                 case 1: // Fireball
-                    if(inventory.UseItem(Inventory.Items.Fireball)){
+                    Spell? fireball = player.GetSpell(Spell.ValidSpells.Fireball);
+                    if(fireball != null && fireball.Use()){
                         enemy.Health -= 20;
                         if(enemy.IsDead()){
                             Console.WriteLine($"You burn the {enemy.Name} to cinders!");
@@ -199,7 +198,8 @@ static class Combat{
                     }
                 return;
                 case 2: // Freeze
-                    if(inventory.UseItem(Inventory.Items.Freeze)){
+                    Spell? freeze = player.GetSpell(Spell.ValidSpells.Freeze);
+                    if(freeze != null && freeze.Use()){
                         enemy.Stun(2);
                         enemy.StunCause = Display.StunCause.freeze;
                         Console.WriteLine("You freeze the enemy in a block of ice!");

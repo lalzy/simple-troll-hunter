@@ -9,24 +9,29 @@ public class Rooms{
     /// <returns>Boolean for if it should skip press-any-key or not</returns>
     public static bool Blacksmith(){
         Display.Rooms.BlackSmithMenu();
+        Player player = Globals.Player;
         int.TryParse(Console.ReadLine(), out int choice);
         Console.Clear();
 
         switch(choice){
             case 1:
-                int min = Globals.Player.MinDamage;
-                int max = Globals.Player.MaxDamage;
+                int min = player.MinDamage;
+                int max = player.MaxDamage;
                 int improvement = new Random().Next(-2, 5);
                 Display.Rooms.SharpenMenu();
                 int.TryParse(Console.ReadLine(), out int sharpenChoice);
                 Console.Clear();
                 if(sharpenChoice == 1){
-                    Globals.Player.MinDamage = Math.Max(0, min + improvement);
+                    player.MinDamage = Math.Max(0, min + improvement);
                 }else if (sharpenChoice == 2){
-                    Globals.Player.MaxDamage = Math.Max(0, max + improvement);
+                    player.MaxDamage = Math.Max(0, max + improvement);
                 }else{
                     Display.NothingHappened();
                 }
+
+                
+                player.MinDamage = Math.Min(player.MinDamage, player.MaxDamage);
+                player.MaxDamage = Math.Max(player.MinDamage, player.MaxDamage);
 
                 if(improvement < 0){
                     Display.Rooms.SwordBroke();
@@ -35,10 +40,10 @@ public class Rooms{
                 }else{
                     Display.Rooms.SwordNothing();
                 }
-                    break;
+                break;
             case 2:
                 Display.Rooms.InspectSwordDamage();
-                    break;
+                break;
         }
     
         return false;

@@ -30,7 +30,7 @@ static class CharacterSelection{
     private static Player CreateArcher(){
         Player player = new Player(30, 1, 5, 5, 10);
         //player.Class = Player.Classes.archer;
-        player.Abilities.Add(Player.AbilityEnum.BowMaster);
+        player.Perks.Add(Player.PerksEnum.BowMaster);
         player.Inventory.AddItem(Inventory.Items.food, 3);
         player.Inventory.AddItem(Inventory.Items.torch, 1);
         player.Inventory.CreateItem(Inventory.Items.arrows, 20, 20);
@@ -40,13 +40,10 @@ static class CharacterSelection{
     private static Player CreateBerserker(){
         Player player = new Player(60, 8, 15);
         player.Inventory.CreateItem(Inventory.Items.food, 0, 2);
-        player.Abilities.Add(Player.AbilityEnum.ChargeUp);
+        player.Perks.Add(Player.PerksEnum.ChargeUp);
         player.Inventory.AddItem(Inventory.Items.torch, 1);
         player.Inventory.CreateItem(Inventory.Items.shield, 0, 0);
         player.Inventory.CreateItem(Inventory.Items.arrows, 0, 0);
-        player.Inventory.CreateItem(Inventory.Items.Fireball, 0, 0);
-        player.Inventory.CreateItem(Inventory.Items.Freeze, 0, 0);
-        player.Inventory.CreateItem(Inventory.Items.ShieldSpell, 0, 0);
         return player;
     }
 
@@ -55,10 +52,13 @@ static class CharacterSelection{
         player.Inventory.CreateItem(Inventory.Items.tools, 0, 0);
         player.Inventory.CreateItem(Inventory.Items.arrows, 0, 0);
         player.Inventory.CreateItem(Inventory.Items.shield, 0, 3);
-        player.Inventory.CreateItem(Inventory.Items.food, 0, 1);
-        player.Inventory.CreateItem(Inventory.Items.Fireball, 10, 20);
-        player.Inventory.CreateItem(Inventory.Items.Freeze, 10, 20);
-        player.Inventory.CreateItem(Inventory.Items.ShieldSpell, 5, 20);
+        player.Inventory.CreateItem(Inventory.Items.food, 1, 2);
+        player.Inventory.AddItem(Inventory.Items.torch); // Replace for Light-spell later.
+
+        player.Spells = new List<Spell>{
+            new Spell(Spell.ValidSpells.Fireball, 5, 5),
+            new Spell(Spell.ValidSpells.Freeze, 5, 5),
+        };
         return player;
     }
 
