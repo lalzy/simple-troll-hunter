@@ -88,7 +88,7 @@ class Display{
     }
 
     static public void ShootArrow(){
-        if(Globals.Player.Class == Player.Classes.archer){
+        if(Globals.Player.Abilities.Contains(Player.AbilityEnum.BowMaster)){
             Console.WriteLine("You dodge back as you shoot an arrow. You're too quick for the enemy!");
         }else{
             Console.WriteLine("You shot an arrow at the enemy!");
@@ -145,7 +145,7 @@ class Display{
             if(player.Inventory.GetItem(Inventory.Items.torch).Amount > 0){
                 Console.WriteLine("[T]hrow your torch at the enemy!");
             }
-            if((Combat.FirstTurn || player.Class == Player.Classes.archer) && player.Inventory.GetItem(Inventory.Items.arrows).Amount > 0){
+            if((Combat.FirstTurn || player.Abilities.Contains(Player.AbilityEnum.BowMaster)) && player.Inventory.GetItem(Inventory.Items.arrows).Amount > 0){
                 Console.WriteLine("[S]hoot an arrow");
                 Console.WriteLine($"     Arrows: {player.Inventory.GetItem(Inventory.Items.arrows).Amount}");
             }

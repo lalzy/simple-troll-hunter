@@ -29,7 +29,8 @@ static class CharacterSelection{
 
     private static Player CreateArcher(){
         Player player = new Player(30, 1, 5, 5, 10);
-        player.Class = Player.Classes.archer;
+        //player.Class = Player.Classes.archer;
+        player.Abilities.Add(Player.AbilityEnum.BowMaster);
         player.Inventory.AddItem(Inventory.Items.food, 3);
         player.Inventory.AddItem(Inventory.Items.torch, 1);
         player.Inventory.CreateItem(Inventory.Items.arrows, 20, 20);
@@ -63,7 +64,7 @@ static class CharacterSelection{
 
     private static Player CreateKnight(){
         Player player = new Player(50, 5, 10);
-        player.Class = Player.Classes.knight;
+        // player.Class = Player.Classes.knight;
         player.Inventory.AddItem(Inventory.Items.food, 3);
         player.Inventory.AddItem(Inventory.Items.shield, 3);
         player.Inventory.AddItem(Inventory.Items.torch, 1);

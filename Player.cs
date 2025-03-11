@@ -15,7 +15,7 @@ class Player : Creature{
         knight = 1,
         archer = 2,
     }
-    public Classes Class;
+    //public Classes Class;
     public Inventory Inventory;
     public bool IsBlocking = false;
     public bool skipped;
@@ -29,7 +29,7 @@ class Player : Creature{
         Abilities = new List<AbilityEnum>();
         this.MinDamage = minDamage;
         this.MaxDamage = maxDamage;
-        Class = Classes.custom;
+        // Class = Classes.custom;
         this.SetHealth(hp);
     }
 
