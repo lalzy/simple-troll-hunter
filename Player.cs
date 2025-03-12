@@ -129,6 +129,8 @@ class Player : Creature{
             }
         }else{
             Display.Rooms.NoFoodText();
+            Display.PressAnyKey();
+            Console.ReadKey();
         }
         return rested;
     }
@@ -179,7 +181,7 @@ class Player : Creature{
         damage += ExtraDamage;
         ExtraDamage = 0; // Reset extraDamage
         Display.PlayerAttack(damage);
-        
+
         return damage;
     }
 

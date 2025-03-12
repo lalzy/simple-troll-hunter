@@ -39,7 +39,8 @@ static class Combat{
     /// Ai's turn to act.
     /// </summary>
     static void AiAction(){
-        if(!Globals.PlayerTurn && Enemy.CurrentEnemy != null){
+        if(Enemy.CurrentEnemy == null) return;
+        if(!Globals.PlayerTurn){
             Globals.Player.Stunned = false;
             if(Enemy.CurrentEnemy.Stunned){
                 Enemy.CurrentEnemy.ProgressStunned();
@@ -51,9 +52,12 @@ static class Combat{
                     Globals.Player.Block(damage);
                 }else{
                     Display.TakeDamagePrint(damage);
-                    Globals.Player.Health -= damage;
+                    Globals.Player.TakeDamage(damage);
                 }
             }
+        }else if(Enemy.CurrentEnemy.IsDead()){
+            Console.WriteLine(Enemy.CurrentEnemy.DeathText);
+            Enemy.CurrentEnemy = null;
         }
     }
 
@@ -129,7 +133,10 @@ static class Combat{
             case Action.skip:
                 return;
             case Action.attack:
-                Enemy.CurrentEnemy.Health -= Globals.Player.Attack(Globals.Player.GetMainWeapon());
+                Enemy.CurrentEnemy.TakeDamage(Globals.Player.Attack(Globals.Player.GetMainWeapon()));
+                if(Enemy.CurrentEnemy.IsDead()){
+                    Enemy.CurrentEnemy.DeathText = Display.GetKillMessage(Enemy.CurrentEnemy);
+                }
                 break;
             case Action.block: 
                 // add drinking.
@@ -146,8 +153,14 @@ static class Combat{
                         if(Globals.Player.Inventory.UseItem(Inventory.Items.arrows)){
                             Enemy.CurrentEnemy.Stun();
                             Enemy.CurrentEnemy.StunCause = Display.StunCause.arrow;
-                            Enemy.CurrentEnemy.Health -= Globals.Player.Attack(Globals.Player.Equipment.OffHand);
                             Display.ShootArrow();
+
+
+                            Enemy.CurrentEnemy.TakeDamage(Globals.Player.Attack(Globals.Player.Equipment.OffHand));
+                            if(Enemy.CurrentEnemy.IsDead()){
+                                Enemy.CurrentEnemy.DeathText = Display.GetKillMessage(Enemy.CurrentEnemy, Globals.Player.Equipment.OffHand);
+                            }
+
                         }else{
                             Display.NoArrows();
                         }
@@ -188,14 +201,14 @@ static class Combat{
                 case 1: // Fireball
                     Spell? fireball = player.GetSpell(Spell.ValidSpells.Fireball);
                     if(fireball != null && fireball.Use()){
-                        enemy.Health -= 20;
+                        enemy.TakeDamage(20);
                         if(enemy.IsDead()){
-                            Console.WriteLine($"You burn the {enemy.Name} to cinders!");
+                            enemy.DeathText = $"You burned the {enemy.Name} to cinders!";
                         }else{
                             Console.WriteLine($"You cast a fireball at the {enemy.Name}.");
                         }
                     }else{
-                        Console.WriteLine("You have no fireball scrolls...");
+                        Console.WriteLine("You have no fireball slots left!");
                     }
                 return;
                 case 2: // Freeze

@@ -48,17 +48,12 @@ class Enemy : Creature{
         int damage = new Random().Next(MinDamage, MaxDamage);
         return damage;
     }
-    
+
     /// <summary>
     /// Check if the enemy is dead or not.
     /// </summary>
     /// <returns>Wether enemy is dead or not</returns>
     new public bool IsDead(){
-        if(this.Health <= 0){
-            Display.CreatureDiesMessage(this);
-            return true;
-        }else{
-            return false;
-        }
+        return this.Health <= 0;
     }
 }

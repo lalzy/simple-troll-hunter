@@ -8,6 +8,8 @@ class Creature {
     public int BaseHealth;
     public bool Stunned;
     public int StunDuration;
+    public string? DeathText;
+    public bool InstantKilled;
     public Display.StunCause StunCause;
 
     public void ProgressStunned(){
@@ -17,6 +19,19 @@ class Creature {
             Stunned = false;
         }
     }
+
+    private void InstantKillCheck(int damage){
+        if(damage >= Health)
+            InstantKilled = true;
+    }
+
+    public void TakeDamage(int damage = 0){
+        if(Health == BaseHealth){
+            InstantKillCheck(damage);
+        }
+        Health -= damage;
+    }
+
     /// <summary>
     /// Stuns the enemy for amount of turns specified.
     /// </summary>

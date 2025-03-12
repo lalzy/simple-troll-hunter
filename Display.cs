@@ -6,6 +6,28 @@ class Display{
         Console.WriteLine("press any key to continue");
     }
 
+    public static string GetKillMessage(Enemy enemy, Weapon? weapon = null){
+        weapon = weapon == null ? Globals.Player.GetMainWeapon() : weapon;
+        bool instantDeath = enemy.InstantKilled;
+        string name = enemy.Name;
+        switch(weapon.Type){
+            case Weapon.WeaponType.axe:
+            return instantDeath ? $"You split the {name} in half!" : $"You sink your axe straight into the {name}!";
+            case Weapon.WeaponType.sword:
+            return instantDeath ? $"You sever the {name}'s arm!" : $"You cut open the {name}!";
+            case Weapon.WeaponType.dagger:
+            return instantDeath ? $"You slit the {name}'s throat!" : $"You plant your dagger ino the {name}'s torsor!";
+            case Weapon.WeaponType.staff:
+            return instantDeath ? $"You smash the skull of the {name}" : $"Somehow, the {name} evaporate!";
+            case Weapon.WeaponType.mace:
+            return instantDeath ? $"You smash the {name} to pieces." : $"You crushed the skull of the {name}!";
+            case Weapon.WeaponType.bow:
+            return instantDeath ? $"Lucky shot! It went straight through it's eye!" : $"Your arrow strikes true into the {name}, as it keels over.";
+        }
+        return "";
+    }
+
+
     public static string WeaponText(Weapon weapon, bool capitalizeFirst = true){
         string toReturn = "Bare hands";
         if(weapon == null){
@@ -123,7 +145,7 @@ class Display{
     }
 
     static public void CreatureDiesMessage(Enemy enemy){
-        Console.WriteLine($"You killed the {enemy.Name}!");
+        Console.WriteLine(enemy.DeathText);
         Console.WriteLine("press {any} key to continue.");
         Console.ReadKey();
         Console.Clear();
