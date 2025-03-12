@@ -36,7 +36,6 @@ class Game{
             default:
                 Cave.GenerateCave(5, 10, true);
                 Globals.Player.SetHealth((int) Math.Round((Globals.Player.Health / 1.25))); 
-                Globals.Player.SetShieldHealth(2);
                 Globals.SurprisedChance = 100;
                 invalidSelection = true;
                 break;

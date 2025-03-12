@@ -28,8 +28,10 @@ static class CharacterSelection{
     // Classes
 
     private static Player CreateArcher(){
-        Player player = new Player(30, 1, 5, 5, 10);
+        Player player = new Player(30);
         //player.Class = Player.Classes.archer;
+        player.Equipment.MainHand = new Weapon(1, 5, Weapon.WeaponType.dagger);
+        player.Equipment.OffHand = new Weapon(5, 10, Weapon.WeaponType.bow);
         player.Perks.Add(Player.PerksEnum.BowMaster);
         player.Inventory.AddItem(Inventory.Items.food, 3);
         player.Inventory.AddItem(Inventory.Items.torch, 1);
@@ -38,20 +40,20 @@ static class CharacterSelection{
     }
 
     private static Player CreateBerserker(){
-        Player player = new Player(60, 8, 15);
-        player.Inventory.CreateItem(Inventory.Items.food, 0, 2);
+        Player player = new Player(60);
         player.Perks.Add(Player.PerksEnum.ChargeUp);
+        player.Equipment.MainHand = new Weapon(8, 15, Weapon.WeaponType.axe, true);
+        player.Inventory.CreateItem(Inventory.Items.food, 0, 2);
         player.Inventory.AddItem(Inventory.Items.torch, 1);
-        player.Inventory.CreateItem(Inventory.Items.shield, 0, 0);
         player.Inventory.CreateItem(Inventory.Items.arrows, 0, 0);
         return player;
     }
 
     private static Player CreateMagician (){
-        Player player = new Player(15, 5, 5);
+        Player player = new Player(15);
+        player.Equipment.MainHand = new Weapon(5, 5, Weapon.WeaponType.staff);
         player.Inventory.CreateItem(Inventory.Items.tools, 0, 0);
         player.Inventory.CreateItem(Inventory.Items.arrows, 0, 0);
-        player.Inventory.CreateItem(Inventory.Items.shield, 0, 3);
         player.Inventory.CreateItem(Inventory.Items.food, 1, 2);
         player.Inventory.AddItem(Inventory.Items.torch); // Replace for Light-spell later.
 
@@ -63,10 +65,12 @@ static class CharacterSelection{
     }
 
     private static Player CreateKnight(){
-        Player player = new Player(50, 5, 10);
+        Player player = new Player(50);
         // player.Class = Player.Classes.knight;
+        player.Perks.Add(Player.PerksEnum.CanUseShield);
+        player.Equipment.OffHand = new Weapon(3, 3, Weapon.WeaponType.shield);
+        player.Equipment.MainHand = new Weapon(5, 10, Weapon.WeaponType.sword);
         player.Inventory.AddItem(Inventory.Items.food, 3);
-        player.Inventory.AddItem(Inventory.Items.shield, 3);
         player.Inventory.AddItem(Inventory.Items.torch, 1);
         player.Inventory.AddItem(Inventory.Items.tools, 1);
 

@@ -145,7 +145,7 @@ static class Combat{
                         if(Globals.Player.Inventory.UseItem(Inventory.Items.arrows)){
                             Enemy.CurrentEnemy.Stun();
                             Enemy.CurrentEnemy.StunCause = Display.StunCause.arrow;
-                            Enemy.CurrentEnemy.Health -= new Random().Next(1,10);
+                            Enemy.CurrentEnemy.Health -= Globals.Player.Attack(Globals.Player.Equipment.OffHand);
                             Display.ShootArrow();
                         }else{
                             Display.NoArrows();

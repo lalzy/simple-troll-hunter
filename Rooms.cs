@@ -10,42 +10,46 @@ public class Rooms{
     public static bool Blacksmith(){
         Display.Rooms.BlackSmithMenu();
         Player player = Globals.Player;
+        Weapon? weapon = player.GetMainWeapon();
         int.TryParse(Console.ReadLine(), out int choice);
         Console.Clear();
+        if(weapon != null){
+            switch(choice){
+                case 1:
+                    int min = weapon.MinAttribute;
+                    int max = weapon.MaxAttribute;
+                    // can't break sword if has blacksmithing perk.
+                    int improvement =player.Perks.Contains(Player.PerksEnum.blacksmithing) ? new Random().Next(5) : new Random().Next(-2, 5);
+                    
+                    Display.Rooms.SharpenMenu();
+                    int.TryParse(Console.ReadLine(), out int sharpenChoice);
+                    Console.Clear();
+                    if(sharpenChoice == 1){
+                        weapon.MinAttribute = Math.Max(0, min + improvement);
+                    }else if (sharpenChoice == 2){
+                        weapon.MaxAttribute = Math.Max(0, max + improvement);
+                    }else{
+                        Display.NothingHappened();
+                    }
 
-        switch(choice){
-            case 1:
-                int min = player.MinDamage;
-                int max = player.MaxDamage;
-                int improvement = new Random().Next(-2, 5);
-                Display.Rooms.SharpenMenu();
-                int.TryParse(Console.ReadLine(), out int sharpenChoice);
-                Console.Clear();
-                if(sharpenChoice == 1){
-                    player.MinDamage = Math.Max(0, min + improvement);
-                }else if (sharpenChoice == 2){
-                    player.MaxDamage = Math.Max(0, max + improvement);
-                }else{
-                    Display.NothingHappened();
-                }
+                    
+                    weapon.MinAttribute = Math.Min(weapon.MinAttribute, weapon.MaxAttribute);
+                    weapon.MaxAttribute = Math.Max(weapon.MinAttribute, weapon.MaxAttribute);
 
-                
-                player.MinDamage = Math.Min(player.MinDamage, player.MaxDamage);
-                player.MaxDamage = Math.Max(player.MinDamage, player.MaxDamage);
-
-                if(improvement < 0){
-                    Display.Rooms.SwordBroke();
-                }else if (improvement > 0){
-                    Display.Rooms.SwordSharpened();
-                }else{
-                    Display.Rooms.SwordNothing();
-                }
-                break;
-            case 2:
-                Display.Rooms.InspectSwordDamage();
-                break;
+                    if(improvement < 0){
+                        Display.Rooms.SwordBroke();
+                    }else if (improvement > 0){
+                        Display.Rooms.SwordSharpened();
+                    }else{
+                        Display.Rooms.SwordNothing();
+                    }
+                    break;
+                case 2:
+                    Display.Rooms.InspectSwordDamage();
+                    break;
+            }
         }
-    
+        
         return false;
     }
     /// <summary>
@@ -81,7 +85,12 @@ public class Rooms{
     /// <returns>Wether there was an valid selection or not.
     // Used for wether to skip input or not.</returns>
     public static bool Armory(){
-        int newShieldCon = new Random().Next(1,3);
+        Weapon? shield = Globals.Player.Equipment.OffHand;
+        int newShieldCon = 0;
+        if(Globals.Player.HasShield()){
+            newShieldCon = new Random().Next(0, shield.MaxAttribute);
+        }
+
         bool[] validSelections = Display.Rooms.DiscoverArmory(newShieldCon);
         // Only prompt if there is something to select
         if(!Display.Rooms.NoSelection(validSelections)){
@@ -92,7 +101,13 @@ public class Rooms{
                 if(validSelections[--choice]){
                     switch(choice){
                         case (int) Display.ValidItemChoices.shield:
-                            Globals.Player.Inventory.AddItem(Inventory.Items.shield, newShieldCon);
+                            if(shield == null && !Globals.Player.Perks.Contains(Player.PerksEnum.CanUseShield)){
+                                shield = new Weapon(new Random().Next(1,3), 3, Weapon.WeaponType.shield);
+                            }else if (shield != null){
+                                shield.MinAttribute = newShieldCon;
+                            }else{
+                                Console.WriteLine("You can't use shields!");
+                            }
                         return true;
                         case (int) Display.ValidItemChoices.torch:
                             Globals.Player.Inventory.AddItem(Inventory.Items.torch);

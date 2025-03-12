@@ -4,13 +4,9 @@ public class Inventory{
 
     public enum Items{
         food = 0,
-        shield = 1,
         tools = 2,
         torch = 3,
         arrows = 4,
-        Fireball = 5,
-        Freeze = 6,
-        ShieldSpell = 7,
         
     }
 
@@ -20,13 +16,9 @@ public class Inventory{
     /// </summary>
     public Inventory(){
         CreateItem(Items.food, 0, 3);
-        CreateItem(Items.shield, 0, 3);
         CreateItem(Items.tools, 0, 3);
         CreateItem(Items.torch, 0, 1);
         CreateItem(Items.arrows,0, 3);
-        CreateItem(Items.Fireball, 0, 1);    // Damage - 20.
-        CreateItem(Items.Freeze, 0, 1);      // Stun - 2 turn
-        CreateItem(Items.ShieldSpell, 0, 1); // Prevent damage for 2 turns
     }
     private Dictionary<Items, Item> _inventory = new Dictionary<Items, Item>();
 

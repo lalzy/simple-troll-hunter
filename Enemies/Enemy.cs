@@ -1,5 +1,6 @@
 class Enemy : Creature{
-
+    public int MinDamage;
+    public int MaxDamage;
     private static Stack<dynamic>? _bosses;
     public static Enemy? CurrentEnemy;
 
@@ -39,6 +40,15 @@ class Enemy : Creature{
         }
     }
 
+    /// <summary>
+    /// Get the damage the creature will deal.
+    /// </summary>
+    /// <returns>Damage number rolled</returns>
+    public int Attack(){
+        int damage = new Random().Next(MinDamage, MaxDamage);
+        return damage;
+    }
+    
     /// <summary>
     /// Check if the enemy is dead or not.
     /// </summary>

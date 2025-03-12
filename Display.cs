@@ -50,17 +50,19 @@ class Display{
     }
 
     public static string ShieldConditionText(){
-        switch (Globals.Player.GetShieldHealth()){
-            case 0:
-                return "You have no shield";
-            case 1:
-                return "It's on it's last legs";
-            case 2:
-                return "It's seen some use";
-            case 3:
-                return "it's brand new!";
-            default:
-                return "";
+        if(Globals.Player.HasShield()){
+            switch (Globals.Player.Equipment.OffHand.MinAttribute){
+                case 0:
+                    return "You have no shield";
+                case 1:
+                    return "It's on it's last legs";
+                case 2:
+                    return "It's seen some use";
+                default:
+                    return "It's brand new!";
+            }
+        }else{
+            return "You have no shield";
         }
     }
     static public void ChargeUp(){
@@ -185,7 +187,7 @@ class Display{
                 Console.WriteLine("[M]agic menu");
             }
         }
-        if(player.GetShieldHealth() > 0 && !player.IsBlocking && !Globals.PlayerTurn && !Globals.Player.Stunned){
+        if(player.CanBlock() && !player.IsBlocking && !Globals.PlayerTurn && !Globals.Player.Stunned){
             atLeastOneValid = true;
             Console.WriteLine("[B]lock with your shield.");
             Console.WriteLine($"     Shield Condition:{ShieldConditionText()}");
@@ -201,14 +203,19 @@ class Display{
 
 
     public static void PlayerAttack(int damage){
-        if (damage <= (Globals.Player.MaxDamage / 4)){
-            Console.WriteLine("You barely scratched it..");
-        }else if (damage <= (Globals.Player.MaxDamage / 2)){
-            Console.WriteLine("An alright hit");
-        }else if(damage == Globals.Player.MaxDamage){
-            Console.WriteLine("A perfect hit!");
+        Weapon? weapon = Globals.Player.GetMainWeapon();
+        if(weapon == null){
+            Console.WriteLine("You have no weapon to attack with");
         }else{
-            Console.WriteLine("A good hit!");
+            if (damage <= (weapon.MaxAttribute / 4)){
+                Console.WriteLine("You barely scratched it..");
+            }else if (damage <= (weapon.MaxAttribute/ 2)){
+                Console.WriteLine("An alright hit");
+            }else if(damage == weapon.MaxAttribute){
+                Console.WriteLine("A perfect hit!");
+            }else{
+                Console.WriteLine("A good hit!");
+            }
         }
     }
 
@@ -228,10 +235,11 @@ class Display{
     }
 
     static public void ShieldBlockMessage(){
-        if(Globals.Player.GetShieldHealth() == 1){
+        Player player = Globals.Player;
+        if(player.HasShield() &&  player.Equipment.OffHand.MinAttribute == 1){
             Console.WriteLine("You get ready to block with what remains of your shield, better make it count!");
-        }else if(Globals.Player.GetShieldHealth() == 0){
-            Console.WriteLine("block with what? You have no shield anymore.");
+        }else if(!player.HasShield()){
+            Console.WriteLine("block with what? You have no shield.");
         }else{
             Console.WriteLine("You get ready to block with the shield");
         }
@@ -344,6 +352,7 @@ class Display{
         shield = 0,
         torch = 1,
         arrows = 2,
+        bow = 3,
     }
     public static class Rooms{
         public static void Empty(){
@@ -419,7 +428,10 @@ class Display{
         }
 
         public static void InspectSwordDamage(){
-            Console.WriteLine($"Dmg: {Globals.Player.MinDamage} - {Globals.Player.MaxDamage}");
+            Weapon? weapon = Globals.Player.GetMainWeapon();
+            if(weapon != null){
+                Console.WriteLine($"Dmg: {weapon.MinAttribute} - {weapon.MaxAttribute}");
+            }
         }
 
         public static void SwordNothing(){
@@ -472,29 +484,33 @@ class Display{
         // </returns>
         public static bool[] DiscoverArmory(int newShieldCon){
             Inventory inventory = Globals.Player.Inventory;
-            Item shield = inventory.GetItem(Inventory.Items.shield);
+            Equipment equipment = Globals.Player.Equipment;
             Item torch = inventory.GetItem(Inventory.Items.torch);
             Item arrows = inventory.GetItem(Inventory.Items.arrows);
             bool[] validSelections = new bool[]{false, false, false};
             
             Console.WriteLine("It's an armory!");
-            if(shield.Amount < shield.MaxAmount){
+            if(Globals.Player.Perks.Contains(Player.PerksEnum.CanUseShield)){
                 validSelections[(int) ValidItemChoices.shield] = true;
-                Console.Write($"[1] You see a shield against the wall.");
-                if(shield.Amount < newShieldCon){
-                    Console.WriteLine("It's in a better condition than yours");
-                }else{
-                    Console.WriteLine("But your shield is in a better condition.");
+                    Console.WriteLine("[1] You see a shield against the wall.");
+                if(Globals.Player.HasShield()){
+                    if(equipment.OffHand.MinAttribute < newShieldCon){
+                        Console.WriteLine("  And it's of better quality than what you have!");
+                    }else{
+                        Console.WriteLine("  But what you have is better!");
+                    }
                 }
             }
             if(torch.Amount == 0){
                 validSelections[(int) ValidItemChoices.torch] = true;
                 Console.WriteLine($"[2] You see an unlit torch. pick it up?");
             }
-            if(arrows.Amount < arrows.MaxAmount){
+            if(Globals.Player.HasBow() && arrows.Amount < arrows.MaxAmount){
                 validSelections[(int) ValidItemChoices.arrows] = true;
                 Console.WriteLine($"[3] You see some arrows on a table.");
             }
+             
+             // Add bow
             
             if(NoSelection(validSelections)){
                 Console.WriteLine("But there's nothing you can use");
@@ -518,7 +534,7 @@ class Display{
             if(Globals.Player.Health < Globals.Player.BaseHealth){
                 hasSelection = true;
                 Console.WriteLine("[H]eal - Tend to your wounds");
-            }if(Globals.Player.GetShieldHealth() < Globals.Player.GetShieldHealthBase()
+            }if(Globals.Player.HasShield() &&  Globals.Player.ShieldDamaged()
                                     && inventory.GetItem(Inventory.Items.tools).Amount > 0){
                 hasSelection = true;
                 Console.WriteLine("[F]ix your shield.");

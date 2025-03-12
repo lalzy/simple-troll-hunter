@@ -6,10 +6,6 @@ class Creature {
     public string Name = "";
     public int Health;
     public int BaseHealth;
-    public int MinDamage;
-    public int MaxDamage;
-    public int rangedMin;
-    public int rangedMax;
     public bool Stunned;
     public int StunDuration;
     public Display.StunCause StunCause;
@@ -35,17 +31,6 @@ class Creature {
             Stunned = true;
         }
     }
-    /// <summary>
-    /// Get the damage the creature will deal.
-    /// </summary>
-    /// <returns>Damage number rolled</returns>
-    public int Attack(){
-        int damage = new Random().Next(MinDamage, MaxDamage);
-        return damage;
-    }
-
-    
-
     /// <summary>
     ///  Restore health of the creature.
     /// </summary>

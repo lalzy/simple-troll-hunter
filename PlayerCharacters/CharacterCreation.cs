@@ -3,7 +3,7 @@ static class CharacterCreation{
 
 
     static public Player CustomCharacter(){
-        Player player = new Player(1,1,1,1,1);
+        Player player = new Player(1);
 
         return player;
     }
