@@ -30,8 +30,8 @@ static class CharacterSelection{
     private static Player CreateArcher(){
         Player player = new Player(30);
         //player.Class = Player.Classes.archer;
-        player.Equipment.MainHand = new Weapon(1, 5, Weapon.WeaponType.dagger);
-        player.Equipment.OffHand = new Weapon(5, 10, Weapon.WeaponType.bow);
+        player.Equipment.MainHand = Weapons.GetDagger();
+        player.Equipment.OffHand = Weapons.GetLongBow();
         player.Perks.Add(Player.PerksEnum.BowMaster);
         player.Inventory.AddItem(Inventory.Items.food, 3);
         player.Inventory.AddItem(Inventory.Items.torch, 1);
@@ -42,7 +42,7 @@ static class CharacterSelection{
     private static Player CreateBerserker(){
         Player player = new Player(60);
         player.Perks.Add(Player.PerksEnum.ChargeUp);
-        player.Equipment.MainHand = new Weapon(8, 15, Weapon.WeaponType.axe, true);
+        player.Equipment.MainHand = Weapons.GetBattleAxe();
         player.Inventory.CreateItem(Inventory.Items.food, 0, 2);
         player.Inventory.AddItem(Inventory.Items.torch, 1);
         player.Inventory.CreateItem(Inventory.Items.arrows, 0, 0);
@@ -51,10 +51,11 @@ static class CharacterSelection{
 
     private static Player CreateMagician (){
         Player player = new Player(15);
-        player.Equipment.MainHand = new Weapon(5, 5, Weapon.WeaponType.staff);
+        player.Equipment.MainHand = Weapons.GetStaff();
         player.Inventory.CreateItem(Inventory.Items.tools, 0, 0);
         player.Inventory.CreateItem(Inventory.Items.arrows, 0, 0);
         player.Inventory.CreateItem(Inventory.Items.food, 1, 2);
+        player.Perks.Add(Player.PerksEnum.Meditation); 
         player.Inventory.AddItem(Inventory.Items.torch); // Replace for Light-spell later.
 
         player.Spells = new List<Spell>{
@@ -68,8 +69,9 @@ static class CharacterSelection{
         Player player = new Player(50);
         // player.Class = Player.Classes.knight;
         player.Perks.Add(Player.PerksEnum.CanUseShield);
-        player.Equipment.OffHand = new Weapon(3, 3, Weapon.WeaponType.shield);
-        player.Equipment.MainHand = new Weapon(5, 10, Weapon.WeaponType.sword);
+        player.Perks.Add(Player.PerksEnum.CanFindBow);
+        player.Equipment.MainHand = Weapons.GetShortSword();
+        player.Equipment.OffHand = Weapons.GetKiteShield();
         player.Inventory.AddItem(Inventory.Items.food, 3);
         player.Inventory.AddItem(Inventory.Items.torch, 1);
         player.Inventory.AddItem(Inventory.Items.tools, 1);

@@ -2,6 +2,27 @@ using System.Collections;
 using System.Security.Cryptography;
 
 class Player : Creature{
+    public enum PerksEnum{
+        ChargeUp = 0,
+        CanUseShield = 1, // Will grant + points rather than subtract for custom.
+        blacksmithing = 2,
+        BowMaster = 3, // Jump back after an arrow is shot
+        Meditation = 4, // Recover spells on rest.
+        CanFindBow = 5,
+    }
+    public List<PerksEnum> Perks;
+    public List<Spell> Spells;
+    //public Classes Class;
+    public Inventory Inventory;
+    public Equipment Equipment;
+    public bool IsBlocking = false;
+    public bool skipped;
+    
+    /// <summary>
+    /// Additional Damage
+    /// </summary>
+    public int ExtraDamage = 0;
+
     public  Player(int hp){
         Inventory = new Inventory();
         Perks = new List<PerksEnum>();
@@ -10,20 +31,6 @@ class Player : Creature{
         // Class = Classes.custom;
         this.SetHealth(hp);
     }
-    // Make classes have unique abilities, and move some things, like spells, from items to here.
-    public enum PerksEnum{
-        ChargeUp = 0,
-        CanUseShield = 1, // Will grant + points rather than subtract for custom.
-        blacksmithing = 2,
-        BowMaster = 3, // Jump back after an arrow is shot
-    }
-    public List<PerksEnum> Perks;
-    public enum Classes{
-        custom = 0,
-        knight = 1,
-        archer = 2,
-    }
-    public List<Spell> Spells;
 
     // public bool ExploreSpell(Spell.ValidSpells spell){
     //     switch(spell){
@@ -63,17 +70,6 @@ class Player : Creature{
         return (from spell in Spells where spell.SpellType == spellToCheck select spell).FirstOrDefault();
     }
 
-    //public Classes Class;
-    public Inventory Inventory;
-    public Equipment Equipment;
-    public bool IsBlocking = false;
-    public bool skipped;
-    
-    /// <summary>
-    /// Additional Damage
-    /// </summary>
-    public int ExtraDamage = 0;
-
     /// <summary>
     /// Repairs the shield if it's damaged.
     /// </summary>
@@ -103,9 +99,14 @@ class Player : Creature{
                 Console.WriteLine($"You ate food, food left: {Inventory.GetItem(Inventory.Items.food).Amount}");
                 return true;
             case 'm':
-                Display.Rooms.MagicRest();
-                RestoreSpells();
-                return true;
+                if(Perks.Contains(PerksEnum.Meditation)){
+                    Display.Rooms.MagicRest();
+                    RestoreSpells();
+                    return true;
+                }else{
+                    Display.Rooms.MaicRestFail();
+                    return false;
+                }
             case 'r':
             case 'f':
                 Display.Rooms.FixShield();
@@ -159,11 +160,7 @@ class Player : Creature{
         }
     }
 
-    /// <summary>
-    /// Get the damage the creature will deal.
-    /// </summary>
-    /// <returns>Damage number rolled</returns>
-    public int Attack(Weapon? weapon = null){
+    private int GetBaseDamage(Weapon? weapon = null){
         if(weapon == null){
             return 0;
         }else if (weapon.NotDamageWeapon()){
@@ -172,16 +169,17 @@ class Player : Creature{
             return new Random().Next(weapon.MinAttribute, weapon.MaxAttribute);
         }
     }
+
     /// <summary>
-    /// Calculate how much damage we do, which also depends on if we blocked or not.
+    /// Get the damage the creature will deal.
     /// </summary>
-    /// <returns>The damage dealt</returns>
-    public int CalcDamage (){
-        int damage = this.Attack();
+    /// <returns>Damage number rolled</returns>
+    public int Attack(Weapon? weapon = null){
+        int damage = GetBaseDamage(weapon);
         damage += ExtraDamage;
-        ExtraDamage = 0;
-        
+        ExtraDamage = 0; // Reset extraDamage
         Display.PlayerAttack(damage);
+        
         return damage;
     }
 
@@ -198,7 +196,6 @@ class Player : Creature{
     /// </summary>
     /// <returns>Wether player can block or not.</returns>
     public bool CanBlock(){
-        Display.ShieldBlockMessage();
         if(HasShield() && Equipment.OffHand.MinAttribute > 0){
             return true;
         }else{

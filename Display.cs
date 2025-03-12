@@ -6,6 +6,41 @@ class Display{
         Console.WriteLine("press any key to continue");
     }
 
+    public static string WeaponText(Weapon weapon, bool capitalizeFirst = true){
+        string toReturn = "Bare hands";
+        if(weapon == null){
+            toReturn = "bare hands";
+        }else{
+            switch(weapon.Type){
+                case Weapon.WeaponType.axe: 
+                toReturn = "axe";
+                break;
+                case Weapon.WeaponType.sword:
+                toReturn = "sword";
+                break;
+                case Weapon.WeaponType.mace:
+                toReturn = "mace";
+                break;
+                case Weapon.WeaponType.dagger:
+                toReturn = "dagger";
+                break;
+                case Weapon.WeaponType.staff:
+                toReturn = "staff";
+                break;
+                case Weapon.WeaponType.shield:
+                toReturn = "shield";
+                break;
+            }
+        }
+        // Returns the string capitalized if capitalized, or not if not.
+        return capitalizeFirst ? char.ToUpper(toReturn[0]) + toReturn.Substring(1) : toReturn;
+    }
+
+    public static string WeaponText(bool capitalizeFirst = true){
+        Weapon? weapon = Globals.Player.GetMainWeapon();
+        return WeaponText(weapon, capitalizeFirst);
+    }
+
     public static void ChooseCharacter(){
         Console.WriteLine("Pick a character to play as:");
     }
@@ -172,7 +207,7 @@ class Display{
         Console.WriteLine("-------------------------");
         if(playerTurn){
             atLeastOneValid = true;
-            Console.WriteLine("[A]ttack with your sword!");
+            Console.WriteLine($"[A]ttack with your {WeaponText()}!");
             if(player.Inventory.GetItem(Inventory.Items.torch).Amount > 0){
                 Console.WriteLine("[T]hrow your torch at the enemy!");
             }
@@ -236,15 +271,20 @@ class Display{
 
     static public void ShieldBlockMessage(){
         Player player = Globals.Player;
-        if(player.HasShield() &&  player.Equipment.OffHand.MinAttribute == 1){
-            Console.WriteLine("You get ready to block with what remains of your shield, better make it count!");
-        }else if(!player.HasShield()){
-            Console.WriteLine("block with what? You have no shield.");
+        Weapon? offHand = player.Equipment.OffHand;
+        if (player.HasShield()){
+            if(player.HasShield() &&  player.Equipment.OffHand.MinAttribute == 1){
+                Console.WriteLine("You get ready to block with what remains of your shield, better make it count!");
+            }else if(!player.HasShield() || player.Equipment.OffHand.MinAttribute == 0){
+                Console.WriteLine("There's nothing left of the shield..");
+            }else{
+                Console.WriteLine("You get ready to block with the shield");
+            }
         }else{
-            Console.WriteLine("You get ready to block with the shield");
+                Console.WriteLine("block with what? You have no shield.");
         }
-
     }
+
     static public void BlockedEnemyMessage(){
         Console.WriteLine("You blocked the attack!");
     }
@@ -442,16 +482,17 @@ class Display{
             Console.WriteLine("You sharpened it!");}
 
         public static void SwordBroke(){
-            Console.WriteLine("You botched it... Sword is weaker");}
+            Console.WriteLine($"You botched it... the {WeaponText()} is worse now");}
 
         public static void SharpenMenu(){
             Console.WriteLine("1 - Attempt to tune up the blade (min-damage)");
             Console.WriteLine("2 - Attempt to Sharpen the blade (max-damage)");
         }
+
         public static void BlackSmithMenu(){
-            Console.WriteLine("You see a sword grinder.\n");
-            Console.WriteLine("1 - Try to sharpen your sword?");
-            Console.WriteLine("2 - Inspect your sword (min/max dmg)");
+            Console.WriteLine("You see a sharpener.\n");
+            Console.WriteLine($"1 - Try to sharpen your {WeaponText()}?");
+            Console.WriteLine($"2 - Inspect your {WeaponText()} (min/max dmg)");
         }
 
 
@@ -487,7 +528,7 @@ class Display{
             Equipment equipment = Globals.Player.Equipment;
             Item torch = inventory.GetItem(Inventory.Items.torch);
             Item arrows = inventory.GetItem(Inventory.Items.arrows);
-            bool[] validSelections = new bool[]{false, false, false};
+            bool[] validSelections = new bool[]{false, false, false, false};
             
             Console.WriteLine("It's an armory!");
             if(Globals.Player.Perks.Contains(Player.PerksEnum.CanUseShield)){
@@ -499,6 +540,8 @@ class Display{
                     }else{
                         Console.WriteLine("  But what you have is better!");
                     }
+                }else if (equipment.OffHand != null){
+                    Console.WriteLine($"   Replaces your {WeaponText(equipment.OffHand)} for the shield.");
                 }
             }
             if(torch.Amount == 0){
@@ -509,8 +552,15 @@ class Display{
                 validSelections[(int) ValidItemChoices.arrows] = true;
                 Console.WriteLine($"[3] You see some arrows on a table.");
             }
-             
-             // Add bow
+            
+            if(!Globals.Player.HasBow() && Globals.Player.Perks.Contains(Player.PerksEnum.CanFindBow)){
+                validSelections[(int) ValidItemChoices.bow] = true;
+                Console.WriteLine($"[4] You see a shortbow on the table.");
+                Weapon? offHand = Globals.Player.Equipment.OffHand;
+                if(offHand != null){
+                    Console.WriteLine($"    note: you'll be replacing your {WeaponText(offHand)}!");
+                }
+            }
             
             if(NoSelection(validSelections)){
                 Console.WriteLine("But there's nothing you can use");
@@ -540,7 +590,7 @@ class Display{
                 Console.WriteLine("[F]ix your shield.");
                 Console.WriteLine($"   Tools available: {inventory.GetItem(Inventory.Items.tools).Amount}");
             }
-            if(Globals.Player.SpellCount() > 0){
+            if(Globals.Player.SpellCount() > 0 && Globals.Player.Perks.Contains(Player.PerksEnum.Meditation)){
                 hasSelection = true;
                 Console.WriteLine("[M]to restore some of your spells");
             }
@@ -571,6 +621,9 @@ class Display{
 
         public static void NoFoodText(){
             Console.WriteLine("looks like the perfect spot to rest, unfortunately, you have no more food...");
+        }
+        public static void MaicRestFail(){
+            Console.WriteLine("You do not have the ability to meditate!");
         }
     }
 

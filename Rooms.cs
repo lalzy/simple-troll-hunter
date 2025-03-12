@@ -118,6 +118,15 @@ public class Rooms{
                             inv.AddItem(Inventory.Items.arrows, arrowCount);
                             Display.Rooms.PickedUpArrows(arrowCount);
                         return true;
+                        case (int) Display.ValidItemChoices.bow:
+                            inv = Globals.Player.Inventory;
+                            if (inv.GetItem(Inventory.Items.arrows).MaxAmount < 3){
+                                inv.CreateItem(Inventory.Items.arrows, 3, 3);
+                            }else{
+                                inv.AddItem(Inventory.Items.arrows, 3);
+                            }
+                            Globals.Player.Equipment.OffHand = Weapons.GetShortBow();
+                            return true;
                         default:
                             Display.Rooms.ArmoryDidntChoose();
                         return true;

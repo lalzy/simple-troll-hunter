@@ -129,7 +129,7 @@ static class Combat{
             case Action.skip:
                 return;
             case Action.attack:
-                Enemy.CurrentEnemy.Health -= Globals.Player.CalcDamage();
+                Enemy.CurrentEnemy.Health -= Globals.Player.Attack(Globals.Player.GetMainWeapon());
                 break;
             case Action.block: 
                 // add drinking.
@@ -137,7 +137,8 @@ static class Combat{
                 break;
             case Action.chargeUp:
                 Display.ChargeUp();
-                Globals.Player.ExtraDamage = (int) 0.5 * Globals.Player.Attack(); // +50%
+                Weapon? weapon = Globals.Player.GetMainWeapon();
+                Globals.Player.ExtraDamage =  weapon != null ? (int) (weapon.MaxAttribute * 0.25 ): 1;
                 break;
             case Action.shootArrow:
                 if(Enemy.CurrentEnemy != null){
