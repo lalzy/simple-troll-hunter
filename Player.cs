@@ -17,6 +17,8 @@ class Player : Creature{
     public Equipment Equipment;
     public bool IsBlocking = false;
     public bool skipped;
+    public bool AmbushImmune;
+    public int AmbushImmuneDuration = 0;
     
     /// <summary>
     /// Additional Damage
@@ -30,6 +32,15 @@ class Player : Creature{
         Spells = new List<Spell>();
         // Class = Classes.custom;
         this.SetHealth(hp);
+    }
+
+    public void ProgressAmbushImmunity(){
+        Display.AmbushImmuneProgress(AmbushImmuneDuration);
+        if (AmbushImmune && AmbushImmuneDuration > 0){
+            AmbushImmuneDuration--;
+        }else{
+            AmbushImmune = false;
+        }
     }
 
     // public bool ExploreSpell(Spell.ValidSpells spell){
@@ -47,15 +58,11 @@ class Player : Creature{
     public int SpellCount(bool exploreOnly = false){
         int count = 0;
         foreach(Spell spell in Spells){
-            // if(exploreOnly){
-            //     if(ExploreSpell(spell.SpellType)){
-            //         count += spell.Amount;
-            //     }else{
-            //         continue;
-            //     }
-            // }else{
+            if(exploreOnly){
+                count += spell.ExploreSpell ? spell.Amount : 0;
+            }else{
                 count += spell.Amount;
-            // }
+            }
         }
         return count;
     }
@@ -121,8 +128,11 @@ class Player : Creature{
     /// <summary>
     /// Player rest mechanic
     /// </summary>
-    public bool Rest(){
+    public bool Rest(bool showMagic = false){
         bool rested = false;
+        if(showMagic){
+            Display.MagicMenuEnterText();
+        }
         if(Inventory.GetItem(Inventory.Items.food).Amount > 0){
             if(Display.Rooms.RestMenu(Inventory.GetItem(Inventory.Items.food).Amount)){
                 rested = RestInput();
@@ -140,7 +150,7 @@ class Player : Creature{
     /// </summary>
     public void CheckSurprised(){
         // Torch makes you immune to surprise.
-        if(Inventory.GetItem(Inventory.Items.torch).Amount > 0) return;
+        if(Inventory.GetItem(Inventory.Items.torch).Amount > 0 || AmbushImmune) return;
         else{
             if (new Random().Next(1, 100) < Globals.SurprisedChance){
                 this.Stun(); // stuns for 1 turn.
@@ -230,5 +240,81 @@ class Player : Creature{
         if(HasShield()){
             Equipment.OffHand.MinAttribute -= (int) Math.Ceiling(enemyDamage / 10.0);
         }
+    }
+
+    public bool CombatMagic(int choice, Enemy enemy){
+        switch(choice){
+            case (int) Spell.ValidSpells.Fireball + 1: // Fireball
+                Spell? fireball = this.GetSpell(Spell.ValidSpells.Fireball);
+                if(fireball != null && fireball.Use()){
+                    enemy.TakeDamage(20);
+                    if(enemy.IsDead()){
+                        enemy.DeathText = $"You burned the {enemy.Name} to cinders!";
+                    }else{
+                        Console.WriteLine($"You cast a fireball at the {enemy.Name}.");
+                    }
+                }else{
+                    Console.WriteLine("You have no fireball slots left!");
+                }
+            return true;
+            case (int) Spell.ValidSpells.Freeze + 1: // Freeze
+                Spell? freeze = this.GetSpell(Spell.ValidSpells.Freeze);
+                if(freeze != null && freeze.Use()){
+                    enemy.Stun(2);
+                    enemy.StunCause = Display.StunCause.freeze;
+                    Console.WriteLine("You freeze the enemy in a block of ice!");
+                }else{
+                    Console.WriteLine("You have no freeze scrolls");
+                }
+            return true;
+            case (int) Spell.ValidSpells.ShieldSpell + 1: // ShieldSpell
+            return true;
+        }
+        return false;
+    }
+
+    public bool ExploreMagic(int choice){
+        switch(choice){
+            case (int) Spell.ValidSpells.light + 1:
+                Spell? light = this.GetSpell(Spell.ValidSpells.light);
+                if(light != null && light.Use()){
+                    Console.WriteLine("You illuminate the area");
+                    this.AmbushImmune = true;
+                    this.AmbushImmuneDuration = 5;
+                }else{
+                    Console.WriteLine("You have no more light spell slots.");
+                }
+                return true;
+        }
+        return false;
+    }
+
+    public enum MagicMenusToShow{
+        combatOnly = 0,
+        exploreOnly = 1,
+        both = 2,
+    }
+
+    public void Magic(MagicMenusToShow magicMenuToShow = MagicMenusToShow.combatOnly){
+        Enemy? enemy = Enemy.CurrentEnemy;
+        Player player = Globals.Player;
+
+        if (magicMenuToShow == MagicMenusToShow.combatOnly || magicMenuToShow == MagicMenusToShow.both){
+            if(player.SpellCount() > 0){
+                Display.MagicMenu();
+                int.TryParse(Console.ReadLine(), out int choice);
+                Console.Clear();
+                if(this.CombatMagic(choice, enemy)) return;
+            }
+        }
+        else if(magicMenuToShow == MagicMenusToShow.exploreOnly || magicMenuToShow == MagicMenusToShow.both){
+            if(player.SpellCount(true) > 0){
+                Display.MagicMenu(true);
+                int.TryParse(Console.ReadLine(), out int choice);
+                Console.Clear();
+                if(this.ExploreMagic(choice)) return;
+            }
+        }
+        Console.WriteLine("Invalid Selection");
     }
 }

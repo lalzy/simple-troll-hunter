@@ -2,8 +2,20 @@
 /// We maintain text here for easy expanding/rewriting.
 /// </summary>
 class Display{
+    public static string GetInput(){
+        string? input = Console.ReadLine();
+        Console.Clear();
+        if(string.IsNullOrEmpty(input)) return " ";
+        else return input;
+        
+    }
+    public static int GetIntInput(){
+        int.TryParse(Console.ReadLine(), out int choice);
+        return choice;
+    }
+
     public static void PressAnyKey(){
-        Console.WriteLine("press any key to continue");
+        Console.WriteLine("press Enter key to continue");
     }
 
     public static string GetKillMessage(Enemy enemy, Weapon? weapon = null){
@@ -198,23 +210,38 @@ class Display{
         }
     }
 
-    static public void MagicMenu(){
+    static public void AmbushImmuneProgress(int AmbushImmuneDuration){
+        if(AmbushImmuneDuration - 1 == 0){
+            Console.WriteLine("The light fades and you're surrounded by darkness again.");
+        }else if (AmbushImmuneDuration - 1 == 1){
+            Console.WriteLine("The light begins to fade, it'll last for one more room");
+        }
+    }
+
+    static public void MagicMenu(bool exploreOnly = false){
         Player player = Globals.Player;
         Spell? fireball = player.GetSpell(Spell.ValidSpells.Fireball);
         Spell? freeze = player.GetSpell(Spell.ValidSpells.Freeze);
         Spell? shield = player.GetSpell(Spell.ValidSpells.ShieldSpell);
-
-        if(fireball != null && fireball.Amount > 0){
-            Console.WriteLine("1 - Fireball");
-            Console.WriteLine($"   - {fireball.Amount} Damages the enemy with high-damage");
-        }
-        if(freeze != null && freeze.Amount > 0){
-            Console.WriteLine("2 - Freeze");
-            Console.WriteLine($"   - {freeze.Amount} Freezes (stuns) the enemy temporarily");
-        }
-        if(shield != null && shield.Amount > 0){
-            Console.WriteLine("3 - Shield");
-            Console.WriteLine($"   - {shield.Amount}");
+        Spell? light = player.GetSpell(Spell.ValidSpells.light);
+        if(!exploreOnly){
+            if(fireball != null && fireball.Amount > 0){
+                Console.WriteLine($"{(int) Spell.ValidSpells.Fireball + 1} - Fireball");
+                Console.WriteLine($"   - {fireball.Amount} Damages the enemy with high-damage");
+            }
+            if(freeze != null && freeze.Amount > 0){
+                Console.WriteLine($"{(int) Spell.ValidSpells.Freeze + 1} - Freeze");
+                Console.WriteLine($"   - {freeze.Amount} Freezes (stuns) the enemy temporarily");
+            }
+            if(shield != null && shield.Amount > 0){
+                Console.WriteLine($"{(int) Spell.ValidSpells.ShieldSpell + 1} - Shield");
+                Console.WriteLine($"   - {shield.Amount}");
+            }
+        }else {
+            if(light != null && light.Amount > 0){
+                Console.WriteLine($"{(int) Spell.ValidSpells.light + 1} - Light");
+                Console.WriteLine($"   - Does nothing in combat, but prevent ambush at start");
+            }
         }
     }
 
@@ -256,6 +283,10 @@ class Display{
             Console.Write(">> ");
         }
         return atLeastOneValid;
+    }
+
+    public static void MagicMenuEnterText(){
+        Console.WriteLine("[M] - to show spell menu.");
     }
 
 
@@ -417,65 +448,73 @@ class Display{
         bow = 3,
     }
     public static class Rooms{
-        public static void Empty(){
-            switch(new Random().Next(19)){
-                case 0:
-                    Console.WriteLine("Just an empty room...");
-                return;
+        public static void Empty(bool showMagic){
+            switch(new Random().Next(19) + 1){
                 case 1:
                     Console.WriteLine("Ratty bedrolls are strewn across the floor, some still warm.");
-                return;
+                break;
                 case 2:
                     Console.WriteLine("Looks to be a bathroom.");
-                return;
+                break;
                 case 3:
                     Console.WriteLine("Cobwebs, cobwebs everywhere.");
-                return;
+                break;
                 case 4:
                     Console.WriteLine("An old storage room, absolutely nothing of value");
-                return;
+                break;
                 case 5:
                     Console.WriteLine("Dust hangs thick in the air, disturbed only by your footsteps.");
-                return;
+                break;
                 case 6:
                     Console.WriteLine("A single candle flickers weakly, struggling against the darkness.");
-                return;
+                break;
                 case 7:
                     Console.WriteLine("Rows of wooden shelves stand empty.");
-                return;
+                break;
                 case 8:
                     Console.WriteLine("A broken chair sits in the center, as if someone left in a hurry.");
-                return;
+                break;
                 case 9:
                     Console.WriteLine("The walls are covered in crude drawings, mostly depicting goblins stabbing things.");
-                return;
+                break;
                 case 10:
                     Console.WriteLine("The floor creaks underfoot, protesting your intrusion.");
-                return;
+                break;
                 case 11:
                     Console.WriteLine("A distant whisper seems to fade the moment you try to focus on it.");
-                return;
+                break;
                 case 12:
                     Console.WriteLine("A lantern swings slightly from a hook, though there's no sign of wind.");
-                return;
+                break;
                 case 13:
                     Console.WriteLine("The lingering scent of sweat and damp fur tells you this room was recently occupied.");
-                return;
+                break;
                 case 14:
                     Console.WriteLine("A crude wooden table is littered with half-eaten scraps of questionable meat.");
-                return;
+                break;
                 case 15:
                     Console.WriteLine("You spot a game of dice left mid-roll—someone was in a hurry.");
-                return;
+                break;
                 case 16:
                     Console.WriteLine("A wooden training dummy, covered in knife marks, leans precariously to one side.");
-                return;
+                break;
                 case 17:
                     Console.WriteLine("A pair of small, mismatched weapons rest against the wall, forgotten in the rush.");
-                return;
+                break;
                 case 18:
                     Console.WriteLine("Empty bottles are scattered about, the pungent smell of fermented mushrooms hanging in the air.");
-                return;
+                break;
+                case 19:
+                    Console.WriteLine("Just an empty room...");
+                break;
+            }
+
+            if(showMagic){
+                MagicMenuEnterText();
+            }
+            string input = GetInput();
+            if(showMagic && input[0] == 'm'){
+                Globals.Player.Magic(Player.MagicMenusToShow.exploreOnly);
             }
         }
 
@@ -511,8 +550,11 @@ class Display{
             Console.WriteLine("2 - Attempt to Sharpen the blade (max-damage)");
         }
 
-        public static void BlackSmithMenu(){
+        public static void BlackSmithMenu(bool showMagic){
             Console.WriteLine("You see a sharpener.\n");
+            if(showMagic){
+                MagicMenuEnterText();
+            }
             Console.WriteLine($"1 - Try to sharpen your {WeaponText()}?");
             Console.WriteLine($"2 - Inspect your {WeaponText()} (min/max dmg)");
         }
@@ -522,12 +564,15 @@ class Display{
         /// 
         /// </summary>
         /// <returns>If player can pick up food or not</returns>
-        public static bool DiscoverKitchen(){
+        public static bool DiscoverKitchen(bool showMagic){
             bool canFillPack = false;
             Item food = Globals.Player.Inventory.GetItem(Inventory.Items.food);
 
             Console.WriteLine("You see a kitchen, filled with food");
 
+            if(showMagic){
+                MagicMenuEnterText();
+            }
             Console.WriteLine("1 - Eat until stuffed (+5 hp)");
             if(food.Amount < food.MaxAmount){
                 Console.WriteLine("2 - Fill your pack");
@@ -538,6 +583,7 @@ class Display{
         public static void FoodFull(){
             Console.WriteLine("You don't have enough space to pick up any food!");
         }
+
         /// <summary>
         /// Armory handling
         /// </summary>
@@ -545,7 +591,7 @@ class Display{
         /// <returns>Array of booleans of if the item is valid or not:
         // [shield, torch, arrows]
         // </returns>
-        public static bool[] DiscoverArmory(int newShieldCon){
+        public static bool[] DiscoverArmory(int newShieldCon, bool showMagic){
             Inventory inventory = Globals.Player.Inventory;
             Equipment equipment = Globals.Player.Equipment;
             Item torch = inventory.GetItem(Inventory.Items.torch);
@@ -553,6 +599,9 @@ class Display{
             bool[] validSelections = new bool[]{false, false, false, false};
             
             Console.WriteLine("It's an armory!");
+            if(showMagic){
+                MagicMenuEnterText();
+            }
             if(Globals.Player.Perks.Contains(Player.PerksEnum.CanUseShield)){
                 validSelections[(int) ValidItemChoices.shield] = true;
                     Console.WriteLine("[1] You see a shield against the wall.");

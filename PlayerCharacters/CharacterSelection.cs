@@ -56,11 +56,11 @@ static class CharacterSelection{
         player.Inventory.CreateItem(Inventory.Items.arrows, 0, 0);
         player.Inventory.CreateItem(Inventory.Items.food, 1, 2);
         player.Perks.Add(Player.PerksEnum.Meditation); 
-        player.Inventory.AddItem(Inventory.Items.torch); // Replace for Light-spell later.
 
         player.Spells = new List<Spell>{
-            new Spell(Spell.ValidSpells.Fireball, 5, 5),
-            new Spell(Spell.ValidSpells.Freeze, 5, 5),
+            new Spell(Spell.ValidSpells.Fireball, 5, 8),
+            new Spell(Spell.ValidSpells.Freeze, 5, 8),
+            new Spell(Spell.ValidSpells.light, 5, 10),
         };
         return player;
     }

@@ -171,7 +171,7 @@ static class Combat{
                 }
                 break;
             case Action.magic:
-                Magic();
+                Globals.Player.Magic();
                 break;
             case Action.torch:
                 if(Enemy.CurrentEnemy != null){
@@ -186,47 +186,6 @@ static class Combat{
                 if(!Globals.Player.Stunned && Globals.PlayerTurn)
                     Display.DoNothingMessage();
                 break;
-        }
-    }
-    private static void Magic(){
-        Enemy? enemy = Enemy.CurrentEnemy;
-        if(enemy == null) {
-            return;
-        }
-        Player player = Globals.Player;
-        while(true){
-            Display.MagicMenu();
-            int.TryParse(Console.ReadLine(), out int choice);
-            switch(choice){
-                case 1: // Fireball
-                    Spell? fireball = player.GetSpell(Spell.ValidSpells.Fireball);
-                    if(fireball != null && fireball.Use()){
-                        enemy.TakeDamage(20);
-                        if(enemy.IsDead()){
-                            enemy.DeathText = $"You burned the {enemy.Name} to cinders!";
-                        }else{
-                            Console.WriteLine($"You cast a fireball at the {enemy.Name}.");
-                        }
-                    }else{
-                        Console.WriteLine("You have no fireball slots left!");
-                    }
-                return;
-                case 2: // Freeze
-                    Spell? freeze = player.GetSpell(Spell.ValidSpells.Freeze);
-                    if(freeze != null && freeze.Use()){
-                        enemy.Stun(2);
-                        enemy.StunCause = Display.StunCause.freeze;
-                        Console.WriteLine("You freeze the enemy in a block of ice!");
-                    }else{
-                        Console.WriteLine("You have no freeze scrolls");
-                    }
-                return;
-                case 3: // ShieldSpell
-                return;
-                default:
-                    Console.WriteLine("Invalid Selection");
-                    break;
-            }
         }
     }
 }

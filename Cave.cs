@@ -82,6 +82,7 @@ static class Cave{
                 }
             }
         }
+        // For end
     }
 
     /// <summary>
@@ -89,6 +90,7 @@ static class Cave{
     /// </summary>
     /// <returns>Return the current room, if no more rooms, return endOfCave</returns>
     static private RoomType AdvanceRoom(){
+        Globals.Player.ProgressAmbushImmunity();
         if(_cave == null) return RoomType.endofCave;
         if(_cave[_floor].Count > 0){
             return _cave[_floor].Pop();
@@ -110,26 +112,27 @@ static class Cave{
     /// <param name="currentRoom">The current room we're on</param>
     public static void ExploreRoom(){
         bool skipKeyRead = false;
+        bool CanUseExploreMagic = Globals.Player.SpellCount(true) > 0;
         switch(_currentRoom){
             case RoomType.empty:
-                Display.Rooms.Empty();
+                Display.Rooms.Empty(CanUseExploreMagic);
                 break;
             case RoomType.armory:
-                skipKeyRead = Rooms.Armory();
+                skipKeyRead = Rooms.Armory(CanUseExploreMagic);
                 break;
             case RoomType.blacksmith:
-                skipKeyRead = Rooms.Blacksmith();
+                skipKeyRead = Rooms.Blacksmith(CanUseExploreMagic);
                 break;
             case RoomType.rest:
-                skipKeyRead = Globals.Player.Rest();
+                skipKeyRead = Globals.Player.Rest(CanUseExploreMagic);
                 break;
             case RoomType.kitchen:
-                skipKeyRead = Rooms.Kitchen();
+                skipKeyRead = Rooms.Kitchen(CanUseExploreMagic);
                 break;
         }
         if(!skipKeyRead){
             Display.PressAnyKey();
-            Console.ReadKey();
+            // Console.ReadKey();
         }
         Console.Clear();
     }
