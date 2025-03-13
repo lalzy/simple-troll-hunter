@@ -1,15 +1,48 @@
 Items:
-    Shield - blocks all damage from the enemy, however it's use is limited (depending on enemy damage depends how broken it gets).
     torch - prevents being ambushed (losing a turn), can be used to stun an enemy for 3 turns.
-    arrow - Attack enemy without it being able to react (only start of a turn).
+    arrow - Attack enemy without it being able to react (only start of a turn), can only be used with a bow.
     tools - Fixes shield (at rest locations)
     food - heals (at rest locations)
 
+Spells:
+    Fireball - causes damage
+    Freeze - causes a 2 turn stun (so you get ot do 1 action before they retaliate, as the turn you cast the spell is counted).
+    Light - Effectively a temporary torch, lasts for 5 rooms.
+
+Weapons (tied to character for now):
+    Short Sword - Average damage.
+    BattleAxe - high damage.
+    Long bow - average ranged damage. - prevent enemy attacking, can only be used first turn
+    Short bow - Low ranged damage - prevent enemy attacking, can only be used first turn
+    dagger - low damage
+    staff - low damage
+    shield - prevents damage until broken (usually 3 hits, but high damage can destroy it quicker).
+
+Abilities: 
+    BowUse - can use bows
+    ShieldUse - Can use shields
+    BowMaster - Can use Bows at any stage of combat.
+    chargeUp - Incrase damage by 25% for next hit.
+    Meditation - Can restore spells on rest rooms.
+
 Classes:
-    Knight - 50HP, moderate melee damage, lower ranged damage.
-        Starts with: 3 food, 1 torch, 1 tools, 3 shield.
-    Archer - 30HP, low melee, high ranged damage.
-        Starts with: 3 food, 1 torch, 20 arrows
+    Knight - 50HP:
+        Equipment: Short-sword and shield (blocks damage for as long as it's not broken).
+        Inventory: 3 food, 1 torch, 1 tools.
+        Abilities: Bowuse (only ShortBow can be found), ShieldUse
+    Archer - 30HP:
+        Equipment: LongBow (extra ranged dmg), dagger (low damage).
+        Inventory: 3 food, 1 torch, 20 arrows.
+        Abilities: BowMaster
+    Berserker - 60 HP:
+        Equipment: BattleAxe (high damage)
+        Inventory: 1 torch.
+        Abilities: ChargeUp
+    Magician - 15 HP:
+        Equipment: Staff (low dmg)
+        Inventory: 1 food
+        Abilities: Meditation
+        Spells: Fireball, Freeze, Light.
 
 Easy:
     15% ambush chance (0 with torch)

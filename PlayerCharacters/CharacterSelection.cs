@@ -29,7 +29,6 @@ static class CharacterSelection{
 
     private static Player CreateArcher(){
         Player player = new Player(30);
-        //player.Class = Player.Classes.archer;
         player.Equipment.MainHand = Weapons.GetDagger();
         player.Equipment.OffHand = Weapons.GetLongBow();
         player.Perks.Add(Player.PerksEnum.BowMaster);
@@ -67,7 +66,6 @@ static class CharacterSelection{
 
     private static Player CreateKnight(){
         Player player = new Player(50);
-        // player.Class = Player.Classes.knight;
         player.Perks.Add(Player.PerksEnum.CanUseShield);
         player.Perks.Add(Player.PerksEnum.CanFindBow);
         player.Equipment.MainHand = Weapons.GetShortSword();
