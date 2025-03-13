@@ -11,9 +11,7 @@ class Game{
     /// player input for the difficulty.
     /// </summary>
     static void StartInput(){
-        string? input = Console.ReadLine();
-        if (input == "") input = " ";
-        if(input == null) Environment.Exit(-1);
+        string? input = Display.GetInput();
         bool invalidSelection = false;
         switch(input.ToLower()[0]){
             case 'e':
@@ -86,10 +84,8 @@ class Game{
                 roomsGoneThrough = 1;
 
                 while(true){
-                    string? input = Console.ReadLine();
+                    string? input = Display.GetInput();
                     Console.Clear();
-                    if (input == null) Environment.Exit(-1);
-                    else if (input == "") input = " ";
                     if (input[0] == 'n'){
                         CurrentState = State.abandoned;
                         return true;

@@ -2,7 +2,7 @@ static class CharacterSelection{
     static public Player CharacterCreationInput(){
         while(true){
         Console.Write(">> ");
-        int.TryParse(Console.ReadLine().ToString(), out int choice);
+        int.TryParse(Display.GetInput(), out int choice);
             switch(choice){
                 case 0:
                     return CharacterCreation.CustomCharacter();

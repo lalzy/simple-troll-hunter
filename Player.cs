@@ -93,9 +93,7 @@ class Player : Creature{
     /// </summary>
     /// <returns>Returns true if we did a valid rest, otherwise returns false (for text feedback to player only)</returns>
     private bool RestInput(){
-        string? input = Console.ReadLine();
-        if (input == null) Environment.Exit(-1);
-        else if (input == "") input = " ";
+        string input = Display.GetInput();
 
         // Handle inputing.
         switch(char.ToLower(input[0])){
@@ -302,7 +300,7 @@ class Player : Creature{
         if (magicMenuToShow == MagicMenusToShow.combatOnly || magicMenuToShow == MagicMenusToShow.both){
             if(player.SpellCount() > 0){
                 Display.MagicMenu();
-                int.TryParse(Console.ReadLine(), out int choice);
+                int.TryParse(Display.GetInput(), out int choice);
                 Console.Clear();
                 if(this.CombatMagic(choice, enemy)) return;
             }
@@ -310,7 +308,7 @@ class Player : Creature{
         else if(magicMenuToShow == MagicMenusToShow.exploreOnly || magicMenuToShow == MagicMenusToShow.both){
             if(player.SpellCount(true) > 0){
                 Display.MagicMenu(true);
-                int.TryParse(Console.ReadLine(), out int choice);
+                int.TryParse(Display.GetInput(), out int choice);
                 Console.Clear();
                 if(this.ExploreMagic(choice)) return;
             }

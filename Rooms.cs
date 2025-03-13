@@ -29,7 +29,7 @@ public class Rooms{
                         int improvement =player.Perks.Contains(Player.PerksEnum.blacksmithing) ? new Random().Next(5) : new Random().Next(-2, 5);
                         
                         Display.Rooms.SharpenMenu();
-                        int.TryParse(Console.ReadLine(), out int sharpenChoice);
+                        int.TryParse(Display.GetInput(), out int sharpenChoice);
                         Console.Clear();
                         if(sharpenChoice == 1){
                             weapon.MinAttribute = Math.Max(0, min + improvement);

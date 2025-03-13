@@ -9,11 +9,6 @@ class Display{
         else return input;
         
     }
-    public static int GetIntInput(){
-        int.TryParse(Console.ReadLine(), out int choice);
-        return choice;
-    }
-
     public static void PressAnyKey(){
         Console.WriteLine("press Enter key to continue");
     }

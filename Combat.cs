@@ -86,7 +86,7 @@ static class Combat{
             return Action.skip;
         }
     
-        string? input = Console.ReadLine();
+        string? input = Display.GetInput();
         Console.Clear();
 
         // Always able to exit
